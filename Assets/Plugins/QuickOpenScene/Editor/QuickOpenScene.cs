@@ -63,41 +63,47 @@ namespace QuickOpenScene
                 for (int i = 0; i < sceneConfig.sceneInfos.Count; i++)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    if (GUILayout.Button(new GUIContent("  " + sceneConfig.sceneInfos[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), style))
+                    //判断当前是否有数据
+                    if (sceneConfig.sceneInfos[i].SceneGUID != string.Empty)
                     {
-                        if (SceneManager.GetActiveScene().isDirty)
+                        if (GUILayout.Button(new GUIContent("  " + sceneConfig.sceneInfos[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), style))
                         {
-                            int b = EditorUtility.DisplayDialogComplex("打开场景", $"确定要打开场景{name}吗, \n请提前保存上一个场景!", "打开(保存场景)", "取消", "打开(不保存)");
-                            switch (b)
+                            if (SceneManager.GetActiveScene().isDirty)
                             {
-                                //打开(保存场景)
-                                case 0:
-                                    EditorSceneManager.SaveOpenScenes();
-                                    sceneConfig.sceneInfos[i].Refresh();
-                                    EditorSceneManager.OpenScene(sceneConfig.sceneInfos[i].ScenePath);
-                                    break;
+                                int b = EditorUtility.DisplayDialogComplex("打开场景", $"确定要打开场景{name}吗, \n请提前保存上一个场景!", "打开(保存场景)", "取消", "打开(不保存)");
+                                switch (b)
+                                {
+                                    //打开(保存场景)
+                                    case 0:
+                                        EditorSceneManager.SaveOpenScenes();
+                                        sceneConfig.sceneInfos[i].Refresh();
+                                        EditorSceneManager.OpenScene(sceneConfig.sceneInfos[i].ScenePath);
+                                        break;
 
-                                //打开(不保存)
-                                case 2:
-                                    sceneConfig.sceneInfos[i].Refresh();
-                                    EditorSceneManager.OpenScene(sceneConfig.sceneInfos[i].ScenePath);
-                                    break;
+                                    //打开(不保存)
+                                    case 2:
+                                        sceneConfig.sceneInfos[i].Refresh();
+                                        EditorSceneManager.OpenScene(sceneConfig.sceneInfos[i].ScenePath);
+                                        break;
 
-                                //取消
-                                default:
-                                    break;
+                                    //取消
+                                    default:
+                                        break;
+                                }
                             }
-                        }
-                        else
-                        {
-                            sceneConfig.sceneInfos[i].Refresh();
-                            EditorSceneManager.OpenScene(sceneConfig.sceneInfos[i].ScenePath);
-                        }
+                            else
+                            {
+                                sceneConfig.sceneInfos[i].Refresh();
+                                EditorSceneManager.OpenScene(sceneConfig.sceneInfos[i].ScenePath);
+                            }
 
-                    }
-                    if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.Width(30f)))
-                    {
-                        sceneConfig.sceneInfos.Remove(sceneConfig.sceneInfos[i]);
+                        }
+                        //删除场景按钮
+                        if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.Width(30f)))
+                        {
+                            Debug.Log("删除 " + sceneConfig.sceneInfos[i].SceneName + " 场景成功！");
+                            sceneConfig.sceneInfos.Remove(sceneConfig.sceneInfos[i]);
+                        }
                     }
                     EditorGUILayout.EndHorizontal();
                     EditorGUILayout.Separator();
@@ -122,12 +128,7 @@ namespace QuickOpenScene
             {
                 if (DragAndDrop.paths != null && DragAndDrop.paths.Length > 0)
                 {
-                    if (DragAndDrop.paths[0].ToLower().Contains(".unity"))
-                    {
-                        SceneConfigInfo info = new SceneConfigInfo(DragAndDrop.paths[0], SceneConfigInfo.SceneConfigInfoType.scenePath);
-                        sceneConfig.sceneInfos.Add(info);
-                    }
-
+                    AddScenes.AddScene(sceneConfig, DragAndDrop.paths[0], SceneConfigInfo.SceneConfigInfoType.scenePath);
                 }
             }
 

@@ -6,8 +6,8 @@ namespace QuickOpenScene
 {
     public class AddScenes : Editor
     {
-        [MenuItem("Assets/Tools/Quick Open Scene/搜索当前目录场景添加到SceneConfig")]
-        static void SceneConfig()
+        [MenuItem("Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到配置文件")]
+        static void AddCurrSceneConfig()
         {
             SceneConfig sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(StaticConfig.sceneConfigInfoPath);
 
@@ -24,34 +24,57 @@ namespace QuickOpenScene
                         foreach (var file in files)
                         {
                             string unityPath = file.FullName.Substring(file.FullName.IndexOf("Assets")).Replace(@"\", "/");
-                            SceneConfig temsceneConfig = CreateInstance<SceneConfig>();
-                            SceneConfigInfo info = new SceneConfigInfo(unityPath, SceneConfigInfo.SceneConfigInfoType.scenePath);
-                            bool exist = false;
-                            if (sceneConfig.sceneInfos != null)
-                            {
-                                foreach (var item in sceneConfig.sceneInfos)
-                                {
-                                    if (item.ScenePath == info.ScenePath)
-                                    {
-                                        exist = true;
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!exist)
-                            {
-                                sceneConfig.sceneInfos.Add(info);
-                                Debug.Log(info.SceneName + "场景已添加到SceneConfig");
-                            }
-
+                            AddScene(sceneConfig, unityPath, SceneConfigInfo.SceneConfigInfoType.scenePath);
                         }
                     }
                 }
-                else if (File.Exists(path) && path.ToLower().Contains(".unity"))
+                else
                 {
-                    SceneConfigInfo info = new SceneConfigInfo(path, SceneConfigInfo.SceneConfigInfoType.scenePath);
-                    sceneConfig.sceneInfos.Add(info);
-                    Debug.Log(info.SceneName + "场景已添加到SceneConfig");
+                    AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
+                }
+            }
+        }
+        [MenuItem("Assets/Tools/Quick Open Scene/添加所有场景到配置文件")]
+        static void AddAllSceneConfig()
+        {
+            SceneConfig sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(StaticConfig.sceneConfigInfoPath);
+            string[] guids = AssetDatabase.FindAssets("t:Scene");
+            foreach (var guid in guids)
+            {
+                AddScene(sceneConfig, guid, SceneConfigInfo.SceneConfigInfoType.sceneGUID);
+            }
+        }
+
+        public static void AddScene(SceneConfig sceneConfig, string info, SceneConfigInfo.SceneConfigInfoType sceneConfigInfoType)
+        {
+            string path;
+            if (sceneConfigInfoType == SceneConfigInfo.SceneConfigInfoType.sceneGUID)
+            {
+                path = AssetDatabase.GUIDToAssetPath(info);
+            }
+            else
+            {
+                path = info;
+            }
+            if (File.Exists(path) && Path.GetExtension(path).Contains(".unity"))
+            {
+                bool exist = false;
+                if (sceneConfig.sceneInfos.Count > 0)
+                {
+                    foreach (var item in sceneConfig.sceneInfos)
+                    {
+                        if (item.ScenePath == path)
+                        {
+                            exist = true;
+                            break;
+                        }
+                    }
+                }
+                if (!exist)
+                {
+                    SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfo.SceneConfigInfoType.scenePath);
+                    sceneConfig.sceneInfos.Add(temp);
+                    Debug.Log("添加 " + temp.SceneName + " 场景成功！", temp.Scene);
                 }
             }
         }

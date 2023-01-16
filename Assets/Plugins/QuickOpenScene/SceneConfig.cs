@@ -5,22 +5,16 @@ using UnityEngine;
 
 namespace QuickOpenScene
 {
-    [CreateAssetMenu(menuName = "Quick Open Scene/配置文件")]
+    [CreateAssetMenu(menuName = "Quick Open Scene/创建配置文件")]
     public class SceneConfig : ScriptableObject
     {
         public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
 
-        private void OnValidate()
+        void OnValidate()
         {
             foreach (var scene in sceneInfos)
             {
-                try
-                {
-                    scene.SceneName = scene.Scene.name;
-                    scene.ScenePath = AssetDatabase.GetAssetPath(scene.Scene);
-                    scene.SceneGUID = AssetDatabase.AssetPathToGUID(scene.ScenePath);
-                }
-                catch { }
+                scene.Refresh();
             }
         }
     }
@@ -63,9 +57,30 @@ namespace QuickOpenScene
 
         public void Refresh()
         {
-            scenePath = AssetDatabase.GUIDToAssetPath(SceneGUID);
-            scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-            sceneName = scene.name;
+            if (scene != null)
+            {
+                scenePath = AssetDatabase.GetAssetPath(scene);
+                sceneName = scene.name;
+                sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
+            }
+            else if (sceneGUID != string.Empty)
+            {
+                scenePath = AssetDatabase.GUIDToAssetPath(sceneGUID);
+                scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+                if (scene != null)
+                {
+                    sceneName = scene.name;
+                }
+            }
+            else if (ScenePath != string.Empty)
+            {
+                scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+                if (scene != null)
+                {
+                    sceneName = scene.name;
+                    sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
+                }
+            }
         }
 
         public string SceneName

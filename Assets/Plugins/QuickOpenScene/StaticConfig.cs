@@ -2,8 +2,8 @@ namespace QuickOpenScene
 {
     public class StaticConfig
     {
-        //ÅäÖÃÎÄ¼şÎ»ÖÃ
+        //é…ç½®æ–‡ä»¶ä½ç½®
         public static string sceneConfigInfoPath;
-        public const string VERSION = "1.0";
+        public const string VERSION = "1.1";
     }
 }
