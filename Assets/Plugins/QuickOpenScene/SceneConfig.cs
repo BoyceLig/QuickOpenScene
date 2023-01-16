@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace QuickOpenScene
 {
-    [CreateAssetMenu(menuName = "Quick Open Scene/创建配置文件")]
+    //[CreateAssetMenu(menuName = "Quick Open Scene/创建配置文件")]
     public class SceneConfig : ScriptableObject
     {
         public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
