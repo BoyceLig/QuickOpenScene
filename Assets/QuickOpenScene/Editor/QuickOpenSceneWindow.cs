@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace QuickOpenScene
 {
-    public class QuickOpenScene : EditorWindow
+    public class QuickOpenSceneWindow : EditorWindow
     {
         SceneConfig sceneConfig;
         Vector2 scrollViewPos;
@@ -15,7 +15,7 @@ namespace QuickOpenScene
         // Start is called before the first frame update
         static void Init()
         {
-            EditorWindow editorWindow = GetWindow<QuickOpenScene>();
+            EditorWindow editorWindow = GetWindow<QuickOpenSceneWindow>();
             editorWindow.titleContent = new GUIContent("快速打开场景");
             editorWindow.Show();
         }
@@ -27,7 +27,7 @@ namespace QuickOpenScene
             }
             else
             {
-                EditorUserSettings.SetConfigValue("sceneConfigInfoPath", "Assets/Plugins/QuickOpenScene/Data/SceneConfig.asset");
+                EditorUserSettings.SetConfigValue("sceneConfigInfoPath", "Assets/QuickOpenScene/Data/SceneConfig.asset");
                 StaticConfig.sceneConfigInfoPath = EditorUserSettings.GetConfigValue("sceneConfigInfoPath");
             }
 
