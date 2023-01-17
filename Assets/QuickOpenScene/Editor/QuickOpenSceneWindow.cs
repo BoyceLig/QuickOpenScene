@@ -125,13 +125,18 @@ namespace QuickOpenScene
                 }
             }
             else if (Event.current.type == EventType.DragPerform)
-            {
+            {                
                 if (DragAndDrop.paths != null && DragAndDrop.paths.Length > 0)
                 {
-                    AddScenes.AddScene(sceneConfig, DragAndDrop.paths[0], SceneConfigInfo.SceneConfigInfoType.scenePath);
+                    foreach (var path in DragAndDrop.paths)
+                    {
+                        AddScenes.AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
+                    }
+                    
                 }
             }
 
+            EditorGUILayout.LabelField("Version: " + StaticConfig.VERSION, EditorStyles.centeredGreyMiniLabel);
         }
     }
 }
