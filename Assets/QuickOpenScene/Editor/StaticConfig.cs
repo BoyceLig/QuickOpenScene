@@ -5,7 +5,7 @@ namespace QuickOpenScene
     public class StaticConfig
     {
         //版本
-        public const string version = "1.3";
+        public const string version = "1.4";
 
         static string GetSceneConfigInfoPath()
         {

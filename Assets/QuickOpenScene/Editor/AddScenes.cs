@@ -78,5 +78,11 @@ namespace QuickOpenScene
                 }
             }
         }
+
+        public static void RemoveScene(SceneConfig sceneConfig, SceneConfigInfo sceneConfigInfo)
+        {
+            Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
+            sceneConfig.sceneInfos.Remove(sceneConfigInfo);
+        }
     }
 }
