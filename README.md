@@ -29,21 +29,33 @@ Unity 快速打开场景工具
 ### 配置文件位置
 
 `Assets/QuickOpenScene/Data/SceneConfig.asset`
+
 **说明:配置文件为自动索引，可以随意拖动插件的目录，但是不可以配置文件的相对路径，相对路径必须在 `QuickOpenScene/Data/SceneConfig.asset`**
 
 后期需要什么功能可以在issues里提，会慢慢往里面加功能。
 
-## 预览图
-
-![image](https://user-images.githubusercontent.com/49801599/212704223-d0d961e0-aa40-4246-ae1a-cd10e2a54f7c.png)
-![image](https://user-images.githubusercontent.com/49801599/212704250-e71ae19f-544c-42c4-9d72-211ee4e84d25.png)
-![image](https://user-images.githubusercontent.com/49801599/212704415-eddb3bae-c1f2-498f-aba3-aea65f7710d8.png)
-![image](https://user-images.githubusercontent.com/49801599/212923355-d7b5f695-e916-4cf9-abcd-db4e525ab518.png)
-![image](https://user-images.githubusercontent.com/49801599/212841692-b4720eb7-c957-4bcd-ad2a-8862ab94211c.png)
-![image](https://user-images.githubusercontent.com/49801599/212841743-b0028e53-a7c2-4d38-850d-832945fffaa5.png)
-![image](https://user-images.githubusercontent.com/49801599/212923658-e1d89f73-96fc-4c20-824c-0cab7591d8b5.png)
-
 ## 视频功能展示
+
 [Unity 快速打开场景工具 (QuickOpenScene)_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1X84y1b7nU)
 
 [Unity 快速打开场景工具 (QuickOpenScene) - YouTube](https://youtu.be/56LnPIqwjl0)
+
+## 预览图
+
+![image](https://user-images.githubusercontent.com/49801599/212704223-d0d961e0-aa40-4246-ae1a-cd10e2a54f7c.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212937389-640512db-5779-4660-b09d-ec27ce2bf3fd.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212937454-86266e60-cfd8-4095-977c-4a05a86bf26f.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212704250-e71ae19f-544c-42c4-9d72-211ee4e84d25.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212704415-eddb3bae-c1f2-498f-aba3-aea65f7710d8.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212937203-50d65da7-cdef-47a3-a37f-6259ab3c73aa.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212841692-b4720eb7-c957-4bcd-ad2a-8862ab94211c.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212841743-b0028e53-a7c2-4d38-850d-832945fffaa5.png)
+
+![image](https://user-images.githubusercontent.com/49801599/212923658-e1d89f73-96fc-4c20-824c-0cab7591d8b5.png)
