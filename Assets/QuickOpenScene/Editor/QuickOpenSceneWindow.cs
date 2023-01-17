@@ -135,7 +135,7 @@ namespace QuickOpenScene
                     
                 }
             }
-
+            GUILayout.FlexibleSpace();
             EditorGUILayout.LabelField("Version: " + StaticConfig.VERSION, EditorStyles.centeredGreyMiniLabel);
         }
     }
