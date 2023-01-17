@@ -44,7 +44,7 @@ namespace QuickOpenScene
                     //判断当前是否有数据
                     if (sceneConfig.sceneInfos[i].SceneGUID != string.Empty)
                     {
-                        if (GUILayout.Button(new GUIContent("  " + sceneConfig.sceneInfos[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
+                        if (GUILayout.Button(new GUIContent("  " + sceneConfig.sceneInfos[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle) && Event.current.button == 0)
                         {
                             if (SceneManager.GetActiveScene().isDirty)
                             {
@@ -75,6 +75,23 @@ namespace QuickOpenScene
                                 EditorSceneManager.OpenScene(sceneConfig.sceneInfos[i].ScenePath);
                             }
 
+                        }
+                        else if (Event.current.type == EventType.MouseUp && Event.current.button == 1)
+                        {
+                            GenericMenu menu = new GenericMenu();
+                            int a = i;
+                            menu.AddItem(new GUIContent("删除当前场景"), false, i =>
+                            {
+                                Debug.Log(((SceneConfigInfo)i).SceneName);
+                                Debug.Log(a);
+                                //Debug.Log("删除 " + sceneConfig.sceneInfos[i].SceneName + " 场景成功！");
+                                //sceneConfig.sceneInfos.Remove(sceneConfig.sceneInfos[i]);
+                            }, sceneConfig.sceneInfos[i]);
+                            menu.AddItem(new GUIContent("跳转到当前场景位置"), false, () =>
+                            {
+
+                            });
+                            menu.ShowAsContext();
                         }
                         //删除场景按钮
                         if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.Width(30f)))

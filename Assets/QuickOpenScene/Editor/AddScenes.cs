@@ -56,7 +56,7 @@ namespace QuickOpenScene
             {
                 path = info;
             }
-            if (File.Exists(path) && Path.GetExtension(path).Contains(".unity"))
+            if (File.Exists(path) && Path.GetExtension(path).Contains(".unity") && path.StartsWith("Assets"))
             {
                 bool exist = false;
                 if (sceneConfig.sceneInfos.Count > 0)
