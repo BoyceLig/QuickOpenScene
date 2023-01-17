@@ -1,4 +1,3 @@
-using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -21,29 +20,7 @@ namespace QuickOpenScene
         }
         void OnEnable()
         {
-            if (EditorUserSettings.GetConfigValue("sceneConfigInfoPath") != null && EditorUserSettings.GetConfigValue("sceneConfigInfoPath") != string.Empty)
-            {
-                StaticConfig.sceneConfigInfoPath = EditorUserSettings.GetConfigValue("sceneConfigInfoPath");
-            }
-            else
-            {
-                EditorUserSettings.SetConfigValue("sceneConfigInfoPath", StaticConfig.defaultSceneConfigInfoPath);
-                StaticConfig.sceneConfigInfoPath = EditorUserSettings.GetConfigValue("sceneConfigInfoPath");
-            }
-
-            DirectoryInfo info = new DirectoryInfo(Path.GetDirectoryName(StaticConfig.sceneConfigInfoPath));
-
-            if (!File.Exists(StaticConfig.sceneConfigInfoPath))
-            {
-                if (!Directory.Exists(info.FullName))
-                {
-                    Directory.CreateDirectory(info.FullName);
-                    AssetDatabase.Refresh();
-                }
-                sceneConfig = CreateInstance<SceneConfig>();
-                AssetDatabase.CreateAsset(sceneConfig, StaticConfig.sceneConfigInfoPath);
-            }
-            sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(StaticConfig.sceneConfigInfoPath);
+            sceneConfig = StaticConfig.GetSceneConfigObject();
         }
 
         private void OnGUI()
@@ -51,12 +28,13 @@ namespace QuickOpenScene
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("配置文件：", GUILayout.Width(60f));
-            sceneConfig = EditorGUILayout.ObjectField(sceneConfig, typeof(SceneConfig), false) as SceneConfig;
+            sceneConfig = (SceneConfig)EditorGUILayout.ObjectField(sceneConfig, typeof(SceneConfig), false);
             EditorGUILayout.EndHorizontal();
             EditorGUI.EndDisabledGroup();
 
-            GUIStyle style = new GUIStyle("Button");
-            style.alignment = TextAnchor.MiddleLeft;
+            GUIStyle buttonStyle = new GUIStyle("Button");
+            buttonStyle.alignment = TextAnchor.MiddleLeft;
+
             if (sceneConfig.sceneInfos != null && sceneConfig.sceneInfos.Count > 0)
             {
                 scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
@@ -66,7 +44,7 @@ namespace QuickOpenScene
                     //判断当前是否有数据
                     if (sceneConfig.sceneInfos[i].SceneGUID != string.Empty)
                     {
-                        if (GUILayout.Button(new GUIContent("  " + sceneConfig.sceneInfos[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), style))
+                        if (GUILayout.Button(new GUIContent("  " + sceneConfig.sceneInfos[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
                         {
                             if (SceneManager.GetActiveScene().isDirty)
                             {
@@ -112,8 +90,10 @@ namespace QuickOpenScene
             }
             else
             {
-                GUILayout.Label("场景为空，请加载场景到 Info 文件。");
+                GUILayout.Label("场景为空，请添加场景!");
             }
+
+
 
             //如果鼠标正在拖拽中或拖拽结束时
             if (Event.current.type == EventType.DragUpdated)
@@ -125,18 +105,18 @@ namespace QuickOpenScene
                 }
             }
             else if (Event.current.type == EventType.DragPerform)
-            {                
+            {
                 if (DragAndDrop.paths != null && DragAndDrop.paths.Length > 0)
                 {
                     foreach (var path in DragAndDrop.paths)
                     {
                         AddScenes.AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
                     }
-                    
+
                 }
             }
             GUILayout.FlexibleSpace();
-            EditorGUILayout.LabelField("Version: " + StaticConfig.VERSION, EditorStyles.centeredGreyMiniLabel);
+            EditorGUILayout.LabelField("Version: " + StaticConfig.version, EditorStyles.centeredGreyMiniLabel);
         }
     }
 }

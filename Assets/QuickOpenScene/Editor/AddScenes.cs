@@ -9,7 +9,7 @@ namespace QuickOpenScene
         [MenuItem("Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到配置文件")]
         static void AddCurrSceneConfig()
         {
-            SceneConfig sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(StaticConfig.sceneConfigInfoPath);
+            SceneConfig sceneConfig = StaticConfig.GetSceneConfigObject();
 
             string[] guids = Selection.assetGUIDs;
             for (int i = 0; i < guids.Length; i++)
@@ -37,7 +37,7 @@ namespace QuickOpenScene
         [MenuItem("Assets/Tools/Quick Open Scene/添加所有场景到配置文件")]
         static void AddAllSceneConfig()
         {
-            SceneConfig sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(StaticConfig.sceneConfigInfoPath);
+            SceneConfig sceneConfig = StaticConfig.GetSceneConfigObject();
             string[] guids = AssetDatabase.FindAssets("t:Scene");
             foreach (var guid in guids)
             {
