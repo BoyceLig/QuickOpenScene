@@ -27,7 +27,7 @@ namespace QuickOpenScene
             }
             else
             {
-                EditorUserSettings.SetConfigValue("sceneConfigInfoPath", "Assets/QuickOpenScene/Data/SceneConfig.asset");
+                EditorUserSettings.SetConfigValue("sceneConfigInfoPath", StaticConfig.defaultSceneConfigInfoPath);
                 StaticConfig.sceneConfigInfoPath = EditorUserSettings.GetConfigValue("sceneConfigInfoPath");
             }
 
