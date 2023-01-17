@@ -5,12 +5,10 @@ namespace QuickOpenScene
     public class StaticConfig
     {
         //版本
-        public const string version = "1.2";
-
+        public const string version = "1.3";
 
         static string GetSceneConfigInfoPath()
         {
-
             string guid = AssetDatabase.FindAssets("QuickOpenSceneWindow")[0];
             string path = AssetDatabase.GUIDToAssetPath(guid);
             path = path.Remove(path.IndexOf("QuickOpenScene/Editor")) + "QuickOpenScene/Data/SceneConfig.asset";
