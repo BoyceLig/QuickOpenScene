@@ -3,7 +3,7 @@ namespace QuickOpenScene
     public class Config
     {
         //版本
-        public const string version = "1.5";
+        public const string version = "1.5";        
 
         //菜单路径
         public struct MenuPath
@@ -19,6 +19,7 @@ namespace QuickOpenScene
             public const string githubURL = "https://github.com/BoyceLig/QuickOpenScene"; 
             public const string githubIssuesURL = "https://github.com/BoyceLig/QuickOpenScene/issues"; 
             public const string githubReleasesURL = "https://github.com/BoyceLig/QuickOpenScene/releases"; 
+            public const string githubLatestAPI = "https://api.github.com/repos/BoyceLig/QuickOpenScene/releases/latest"; 
         }
     }
 }

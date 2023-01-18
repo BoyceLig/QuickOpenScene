@@ -7,6 +7,11 @@ namespace QuickOpenScene
 {
     public class SceneConfigManage : Editor
     {
+        public enum GetJsonType
+        {
+            LatestTag, LatestDownloadURL
+        }
+
         [MenuItem(Config.MenuPath.addCurrScene)]
         static void AddCurrSceneConfig()
         {
@@ -102,12 +107,45 @@ namespace QuickOpenScene
             sceneConfig.sceneInfos.Remove(sceneConfigInfo);
         }
 
+        /// <summary>
+        /// 获取SceneConfig配置文件信息
+        /// </summary>
+        /// <returns></returns>
         public static SceneConfig GetSceneConfigObject()
         {
             string guid = AssetDatabase.FindAssets("QuickOpenSceneConfigData")[0];
             string path = AssetDatabase.GUIDToAssetPath(guid);
             SceneConfig sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(path);
             return sceneConfig;
+        }
+
+        /// <summary>
+        /// 获取升级日志的日志信息
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLogText()
+        {
+            string guid = AssetDatabase.FindAssets("QuickOpenSceneConfigData")[0];
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            path = path.Remove(path.IndexOf("Data")) + "ChangeLog.txt";
+            TextAsset logText = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
+            return logText.text;
+        }
+
+        public static string GetJsonData(string path, GetJsonType getJsonType)
+        {
+            string jsonText = AssetDatabase.LoadAssetAtPath<TextAsset>(path).text;
+            GithubJsonData json = JsonUtility.FromJson<GithubJsonData>(jsonText);
+            switch (getJsonType)
+            {
+                case GetJsonType.LatestTag:
+                    return json.tag_name;
+                case GetJsonType.LatestDownloadURL:
+                    return json.assets[0].browser_download_url;
+                default:
+                    return null;
+            }
+            
         }
     }
 }
