@@ -11,7 +11,6 @@ namespace QuickOpenScene
         Vector2 scrollViewPos;
 
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
-        // Start is called before the first frame update
         static void Init()
         {
             EditorWindow editorWindow = GetWindow<WindowManage>();
@@ -31,7 +30,7 @@ namespace QuickOpenScene
             sceneConfig = (SceneConfig)EditorGUILayout.ObjectField(sceneConfig, typeof(SceneConfig), false);
             EditorGUILayout.EndHorizontal();
             EditorGUI.EndDisabledGroup();
-
+            GUILayout.Label("当前场景数量：" + sceneConfig.sceneInfos.Count);
             GUIStyle buttonStyle = new GUIStyle("Button");
             buttonStyle.alignment = TextAnchor.MiddleLeft;
 
