@@ -96,7 +96,7 @@ namespace QuickOpenScene
         /// </summary>
         /// <param name="sceneConfig">配置文件</param>
         /// <param name="sceneConfigInfo">场景的配置信息</param>
-        public static void RemoveScene(SceneConfig sceneConfig, SceneConfigInfo sceneConfigInfo)
+        public static void RemoveSceneInfo(SceneConfig sceneConfig, SceneConfigInfo sceneConfigInfo)
         {
             Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
             sceneConfig.sceneInfos.Remove(sceneConfigInfo);

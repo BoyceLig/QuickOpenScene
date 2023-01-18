@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -45,10 +46,10 @@ namespace QuickOpenScene
                     {
                         if (GUILayout.Button(new GUIContent("  " + sceneConfig.sceneInfos[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
                         {
+                            sceneConfig.sceneInfos[i].Refresh();
                             //左键点击打开场景
                             if (Event.current.button == 0)
                             {
-                                sceneConfig.sceneInfos[i].Refresh();
                                 //判断场景是否丢失
                                 if (sceneConfig.sceneInfos[i].Scene != null)
                                 {
@@ -86,7 +87,6 @@ namespace QuickOpenScene
                                         Debug.Log("删除 " + sceneConfig.sceneInfos[i].SceneName + " 场景成功！");
                                         sceneConfig.sceneInfos.Remove(sceneConfig.sceneInfos[i]);
                                     }
-
                                 }
                             }
                             //右键点击弹出菜单
@@ -94,9 +94,13 @@ namespace QuickOpenScene
                             {
                                 int currIndex = i;
                                 GenericMenu menu = new GenericMenu();
-                                menu.AddItem(new GUIContent("删除当前场景"), false, () =>
+                                menu.AddItem(new GUIContent("复制场景名字"), false, () =>
                                 {
-                                    SceneConfigManage.RemoveScene(sceneConfig, sceneConfig.sceneInfos[currIndex]);
+                                    GUIUtility.systemCopyBuffer = sceneConfig.sceneInfos[currIndex].SceneName;
+                                });
+                                menu.AddItem(new GUIContent("复制场景路径"), false, () =>
+                                {
+                                    GUIUtility.systemCopyBuffer = sceneConfig.sceneInfos[currIndex].ScenePath;
                                 });
                                 menu.AddItem(new GUIContent("跳转到当前场景"), false, () =>
                                 {
@@ -110,19 +114,13 @@ namespace QuickOpenScene
                                     {
                                         if (EditorUtility.DisplayDialog("场景丢失", $"场景{sceneConfig.sceneInfos[currIndex].SceneName}已丢失，是否删除？", "删除数据", "取消"))
                                         {
-                                            SceneConfigManage.RemoveScene(sceneConfig, sceneConfig.sceneInfos[currIndex]);
+                                            SceneConfigManage.RemoveSceneInfo(sceneConfig, sceneConfig.sceneInfos[currIndex]);
                                         }
                                     }
                                 });
-                                menu.AddItem(new GUIContent("复制场景名字"), false, () =>
+                                menu.AddItem(new GUIContent("删除当前场景"), false, () =>
                                 {
-                                    sceneConfig.sceneInfos[currIndex].Refresh();
-                                    GUIUtility.systemCopyBuffer = sceneConfig.sceneInfos[currIndex].SceneName;
-                                });
-                                menu.AddItem(new GUIContent("复制场景路径"), false, () =>
-                                {
-                                    sceneConfig.sceneInfos[currIndex].Refresh();
-                                    GUIUtility.systemCopyBuffer = sceneConfig.sceneInfos[currIndex].ScenePath;
+                                    SceneConfigManage.RemoveSceneInfo(sceneConfig, sceneConfig.sceneInfos[currIndex]);
                                 });
                                 menu.ShowAsContext();
                             }
@@ -131,7 +129,7 @@ namespace QuickOpenScene
                         //删除场景按钮
                         if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.Width(30f)) && Event.current.button == 0)
                         {
-                            SceneConfigManage.RemoveScene(sceneConfig, sceneConfig.sceneInfos[i]);
+                            SceneConfigManage.RemoveSceneInfo(sceneConfig, sceneConfig.sceneInfos[i]);
                         }
                     }
                     EditorGUILayout.EndHorizontal();
@@ -143,17 +141,11 @@ namespace QuickOpenScene
             {
                 GUILayout.Label("场景为空，请添加场景!");
             }
-
-
-
-            //如果鼠标正在拖拽中或拖拽结束时
-            if (Event.current.type == EventType.DragUpdated)
+            //如果鼠标正在拖拽中，并且为unity文件
+            if (Event.current.type == EventType.DragUpdated && Path.GetExtension(DragAndDrop.paths[0]).Contains(".unity"))
             {
-                if (DragAndDrop.paths[0].ToLower().Contains(".unity"))
-                {
-                    //改变鼠标的外表
-                    DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
-                }
+                //改变鼠标的外表
+                DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
             }
             else if (Event.current.type == EventType.DragPerform)
             {
