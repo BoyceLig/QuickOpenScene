@@ -5,22 +5,22 @@ using UnityEngine.SceneManagement;
 
 namespace QuickOpenScene
 {
-    public class QuickOpenSceneWindow : EditorWindow
+    public class WindowManage : EditorWindow
     {
         SceneConfig sceneConfig;
         Vector2 scrollViewPos;
 
-        [MenuItem("Tools/快速打开场景 %&X")]
+        [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         // Start is called before the first frame update
         static void Init()
         {
-            EditorWindow editorWindow = GetWindow<QuickOpenSceneWindow>();
+            EditorWindow editorWindow = GetWindow<WindowManage>();
             editorWindow.titleContent = new GUIContent("快速打开场景");
             editorWindow.Show();
         }
         void OnEnable()
         {
-            sceneConfig = StaticConfig.GetSceneConfigObject();
+            sceneConfig = SceneConfigManage.GetSceneConfigObject();
         }
 
         private void OnGUI()
@@ -97,7 +97,7 @@ namespace QuickOpenScene
                                 GenericMenu menu = new GenericMenu();
                                 menu.AddItem(new GUIContent("删除当前场景"), false, () =>
                                 {
-                                    AddScenes.RemoveScene(sceneConfig, sceneConfig.sceneInfos[currIndex]);
+                                    SceneConfigManage.RemoveScene(sceneConfig, sceneConfig.sceneInfos[currIndex]);
                                 });
                                 menu.AddItem(new GUIContent("跳转到当前场景"), false, () =>
                                 {
@@ -111,7 +111,7 @@ namespace QuickOpenScene
                                     {
                                         if (EditorUtility.DisplayDialog("场景丢失", $"场景{sceneConfig.sceneInfos[currIndex].SceneName}已丢失，是否删除？", "删除数据", "取消"))
                                         {
-                                            AddScenes.RemoveScene(sceneConfig, sceneConfig.sceneInfos[currIndex]);
+                                            SceneConfigManage.RemoveScene(sceneConfig, sceneConfig.sceneInfos[currIndex]);
                                         }
                                     }
                                 });
@@ -132,7 +132,7 @@ namespace QuickOpenScene
                         //删除场景按钮
                         if (GUILayout.Button(EditorGUIUtility.IconContent("TreeEditor.Trash"), GUILayout.Width(30f)) && Event.current.button == 0)
                         {
-                            AddScenes.RemoveScene(sceneConfig, sceneConfig.sceneInfos[i]);
+                            SceneConfigManage.RemoveScene(sceneConfig, sceneConfig.sceneInfos[i]);
                         }
                     }
                     EditorGUILayout.EndHorizontal();
@@ -162,13 +162,13 @@ namespace QuickOpenScene
                 {
                     foreach (var path in DragAndDrop.paths)
                     {
-                        AddScenes.AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
+                        SceneConfigManage.AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
                     }
 
                 }
             }
             GUILayout.FlexibleSpace();
-            EditorGUILayout.LabelField("Version: " + StaticConfig.version, EditorStyles.centeredGreyMiniLabel);
+            EditorGUILayout.LabelField("Version: " + Config.version, EditorStyles.centeredGreyMiniLabel);
         }
     }
 }

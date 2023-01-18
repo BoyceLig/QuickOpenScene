@@ -1,43 +1,49 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 namespace QuickOpenScene
 {
-    public class AddScenes : Editor
+    public class SceneConfigManage : Editor
     {
-        [MenuItem("Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到配置文件")]
+        [MenuItem(Config.MenuPath.addCurrScene)]
         static void AddCurrSceneConfig()
         {
-            SceneConfig sceneConfig = StaticConfig.GetSceneConfigObject();
-
+            //获取配置文件
+            SceneConfig sceneConfig = GetSceneConfigObject();
+            //已选择的guids
             string[] guids = Selection.assetGUIDs;
-            for (int i = 0; i < guids.Length; i++)
+            List<string> direPaths = new List<string>();
+            foreach (var guid in guids)
             {
-                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                string path = AssetDatabase.GUIDToAssetPath(guid);
                 if (Directory.Exists(path))
                 {
-                    DirectoryInfo directoryInfo = new DirectoryInfo(path);
-                    FileInfo[] files = directoryInfo.GetFiles("*.unity", SearchOption.AllDirectories);
-                    if (files != null)
-                    {
-                        foreach (var file in files)
-                        {
-                            string unityPath = file.FullName.Substring(file.FullName.IndexOf("Assets")).Replace(@"\", "/");
-                            AddScene(sceneConfig, unityPath, SceneConfigInfo.SceneConfigInfoType.scenePath);
-                        }
-                    }
+                    direPaths.Add(path);
                 }
                 else
                 {
-                    AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
+                    if (Path.GetExtension(path).Contains(".unity"))
+                    {
+                        AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
+                    }
                 }
             }
+
+            //查找路径内的所有场景文件
+            string[] sceneGuids = AssetDatabase.FindAssets("t:Scene", direPaths.ToArray());
+
+            foreach (var sceneGuid in sceneGuids)
+            {
+                AddScene(sceneConfig, sceneGuid, SceneConfigInfo.SceneConfigInfoType.sceneGUID);
+            }
         }
-        [MenuItem("Assets/Tools/Quick Open Scene/添加所有场景到配置文件")]
+
+        [MenuItem(Config.MenuPath.addAllScene)]
         static void AddAllSceneConfig()
         {
-            SceneConfig sceneConfig = StaticConfig.GetSceneConfigObject();
+            SceneConfig sceneConfig = GetSceneConfigObject();
             string[] guids = AssetDatabase.FindAssets("t:Scene");
             foreach (var guid in guids)
             {
@@ -45,6 +51,12 @@ namespace QuickOpenScene
             }
         }
 
+        /// <summary>
+        /// 添加场景到配置文件
+        /// </summary>
+        /// <param name="sceneConfig">配置文件</param>
+        /// <param name="info">路径或者guid</param>
+        /// <param name="sceneConfigInfoType">info 的类型</param>
         public static void AddScene(SceneConfig sceneConfig, string info, SceneConfigInfo.SceneConfigInfoType sceneConfigInfoType)
         {
             string path;
@@ -79,10 +91,23 @@ namespace QuickOpenScene
             }
         }
 
+        /// <summary>
+        /// 在配置文件内删除场景配置信息
+        /// </summary>
+        /// <param name="sceneConfig">配置文件</param>
+        /// <param name="sceneConfigInfo">场景的配置信息</param>
         public static void RemoveScene(SceneConfig sceneConfig, SceneConfigInfo sceneConfigInfo)
         {
             Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
             sceneConfig.sceneInfos.Remove(sceneConfigInfo);
+        }
+
+        public static SceneConfig GetSceneConfigObject()
+        {
+            string guid = AssetDatabase.FindAssets("QuickOpenSceneConfigData")[0];
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            SceneConfig sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(path);
+            return sceneConfig;
         }
     }
 }

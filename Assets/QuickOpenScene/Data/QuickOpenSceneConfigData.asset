@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b0362a7a5766f04c98ffb15071918cd, type: 3}
-  m_Name: SceneConfig
+  m_Name: QuickOpenSceneConfigData
   m_EditorClassIdentifier: 
   sceneInfos: []
