@@ -10,8 +10,7 @@ namespace QuickOpenScene
         {
             if (!Config.IsDown)
             {
-                new HttpUitls().GetJson();
-                Config.IsDown = true;                
+                new HttpUitls().GetJson();                              
             }
         }
     }

@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -18,14 +20,32 @@ namespace QuickOpenScene
                 {
                     Config.LatestVersion = temp.tag_name;
                     Config.LatestDownloadURL = temp.assets[0].browser_download_url;
+                    Config.IsDown = true;
                 }
             }));
         }
 
+        static async void DownloadJson()
+        {
+            Uri uri = new Uri(Config.About.githubLatestAPI);
+            HttpClient request = new HttpClient();
+            ProductHeaderValue userAgent = new ProductHeaderValue("QuickOpenScene", "1.0.0");
+            ProductInfoHeaderValue userAgentInfoHeader = new ProductInfoHeaderValue(userAgent);
+            request.DefaultRequestHeaders.UserAgent.Add(userAgentInfoHeader);
+            request.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "OAUTH-TOKEN"); ;
+            request.Timeout = TimeSpan.FromSeconds(5);
+            HttpResponseMessage response = await request.GetAsync(uri);
+            string responseText = await response.Content.ReadAsStringAsync();
+        }
+
+
+
+
         IEnumerator StartRequest(string url, Action success = null)
         {
             using (www = UnityWebRequest.Get(url))
-            {                
+            {
+                www.SetRequestHeader("Content-Type", "application/json");
                 yield return www.SendWebRequest();
 
                 while (www.isDone == false)
