@@ -13,27 +13,21 @@ namespace QuickOpenScene
         UnityWebRequest www;
         public void GetJson()
         {
-            StartBackgroundTask(StartRequest(Config.About.githubLatestAPI, () =>
+            StartBackgroundTask(StartRequest(Config.URL.githubLatestAPI, () =>
             {
                 var temp = JsonUtility.FromJson<GithubJsonData>(www.downloadHandler.text);
                 if (temp != null)
                 {
                     Config.LatestVersion = temp.tag_name;
                     Config.LatestDownloadURL = temp.assets[0].browser_download_url;
-                    Config.IsDown = true;
-                    Version currVersion = new Version(Config.currVersion);
-                    Version latestVersion = new Version(Config.LatestVersion);
-                    if (currVersion < latestVersion)
-                    {
-                        Config.NeedUpdate = true;
-                    }
+                    Config.IsDown = true;                    
                 }
             }));
         }
 
         static async void DownloadJson()
         {
-            Uri uri = new Uri(Config.About.githubLatestAPI);
+            Uri uri = new Uri(Config.URL.githubLatestAPI);
             HttpClient request = new HttpClient();
             ProductHeaderValue userAgent = new ProductHeaderValue("QuickOpenScene", "1.0.0");
             ProductInfoHeaderValue userAgentInfoHeader = new ProductInfoHeaderValue(userAgent);

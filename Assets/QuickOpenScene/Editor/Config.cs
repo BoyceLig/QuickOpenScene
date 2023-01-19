@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine.Windows;
 
@@ -43,13 +44,12 @@ namespace QuickOpenScene
         }
 
         //关于界面的数据
-        public struct About
+        public struct URL
         {
-            public const string githubURL = "https://github.com/BoyceLig/QuickOpenScene";
-            public const string githubIssuesURL = "https://github.com/BoyceLig/QuickOpenScene/issues";
-            public const string githubReleasesURL = "https://github.com/BoyceLig/QuickOpenScene/releases";
+            public const string github = "https://github.com/BoyceLig/QuickOpenScene";
+            public const string githubIssues = "https://github.com/BoyceLig/QuickOpenScene/issues";
+            public const string githubReleases = "https://github.com/BoyceLig/QuickOpenScene/releases";
             public const string githubLatestAPI = "https://api.github.com/repos/BoyceLig/QuickOpenScene/releases/latest";
-
         }
 
         /// <summary>
@@ -102,7 +102,9 @@ namespace QuickOpenScene
             }
         }
 
-        //最新版本
+        /// <summary>
+        /// 最新版本
+        /// </summary>
         public static string LatestVersion
         {
             get
@@ -117,23 +119,25 @@ namespace QuickOpenScene
                     latestVersion = value;
                     SessionState.SetString("QuickOpenSceneLatestVersion", value);
                 }
-
             }
         }
 
+        /// <summary>
+        /// 最新版本下载地址
+        /// </summary>
         public static string LatestDownloadURL
         {
             get
             {
                 if (latestDownloadURL == null)
                 {
-                    latestDownloadURL = About.githubReleasesURL;
+                    latestDownloadURL = URL.githubReleases;
                 }
                 else
                 {
-                    if (latestDownloadURL != SessionState.GetString("QuickOpenSceneLatestDownloadURL", About.githubReleasesURL))
+                    if (latestDownloadURL != SessionState.GetString("QuickOpenSceneLatestDownloadURL", URL.githubReleases))
                     {
-                        latestDownloadURL = SessionState.GetString("QuickOpenSceneLatestDownloadURL", About.githubReleasesURL);
+                        latestDownloadURL = SessionState.GetString("QuickOpenSceneLatestDownloadURL", URL.githubReleases);
                     }
                 }
                 return latestDownloadURL;
@@ -149,7 +153,9 @@ namespace QuickOpenScene
             }
         }
 
-        //是否已经下载了js
+        /// <summary>
+        /// 是否下载完成
+        /// </summary>
         public static bool IsDown
         {
             get
@@ -164,17 +170,31 @@ namespace QuickOpenScene
             }
         }
 
+
+
+
+        static Version currVersionV, latestVersionV;
+        /// <summary>
+        /// 是否需要更新
+        /// </summary>
         public static bool NeedUpdate
         {
             get
             {
-                needUpdata = SessionState.GetBool("NeedUpdate", false);
+                if (currVersionV == null)
+                {
+                    currVersionV = new Version(currVersion);
+                }
+                if (latestVersionV == null)
+                {
+                    latestVersionV = new Version(LatestVersion);
+                }
+
+                if (currVersionV < latestVersionV)
+                {
+                    needUpdata = true;
+                };
                 return needUpdata;
-            }
-            set
-            {
-                SessionState.SetBool("NeedUpdate", value);
-                needUpdata = value;
             }
         }
     }

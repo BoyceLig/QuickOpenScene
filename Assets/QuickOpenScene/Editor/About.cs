@@ -65,17 +65,17 @@ namespace QuickOpenScene
             GUILayout.Label("相关链接：", GUILayout.ExpandWidth(false));
             if (GUILayout.Button("Github", linkStyle, GUILayout.ExpandWidth(false)))
             {
-                Application.OpenURL(Config.About.githubURL);
+                Application.OpenURL(Config.URL.github);
             }
             GUILayout.Label("-", GUILayout.ExpandWidth(false));
             if (GUILayout.Button("Github Releases", linkStyle, GUILayout.ExpandWidth(false)))
             {
-                Application.OpenURL(Config.About.githubReleasesURL);
+                Application.OpenURL(Config.URL.githubReleases);
             }
             GUILayout.Label("-", GUILayout.ExpandWidth(false));
             if (GUILayout.Button("Github Issues", linkStyle, GUILayout.ExpandWidth(false)))
             {
-                Application.OpenURL(Config.About.githubIssuesURL);
+                Application.OpenURL(Config.URL.githubIssues);
             }
             EditorGUILayout.EndHorizontal();
 
