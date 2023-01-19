@@ -163,7 +163,7 @@ namespace QuickOpenScene
             }
             GUILayout.FlexibleSpace();
 
-            if (float.Parse(Config.LatestVersion) > float.Parse(Config.currVersion))
+            if (Config.NeedUpdate)
             {
                 if (GUILayout.Button($"Version: {Config.currVersion}（需要更新）", versionStyle))
                 {

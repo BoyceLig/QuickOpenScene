@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine.Windows;
 
 namespace QuickOpenScene
 {
@@ -23,6 +24,7 @@ namespace QuickOpenScene
         //当前版本
         public const string currVersion = "1.5";
         static bool isDown;
+        static bool needUpdata;
         static string latestVersion;
         static string latestDownloadURL;
         //插件路径
@@ -47,6 +49,7 @@ namespace QuickOpenScene
             public const string githubIssuesURL = "https://github.com/BoyceLig/QuickOpenScene/issues";
             public const string githubReleasesURL = "https://github.com/BoyceLig/QuickOpenScene/releases";
             public const string githubLatestAPI = "https://api.github.com/repos/BoyceLig/QuickOpenScene/releases/latest";
+
         }
 
         /// <summary>
@@ -60,14 +63,16 @@ namespace QuickOpenScene
                 {
                     if (EditorUserSettings.GetConfigValue("pluginPath") == null || EditorUserSettings.GetConfigValue("pluginPath") == string.Empty)
                     {
-                        string guid = AssetDatabase.FindAssets("QuickOpenSceneConfigData")[0];
-                        pluginPath = AssetDatabase.GUIDToAssetPath(guid);
-                        pluginPath = pluginPath.Remove(pluginPath.IndexOf("/Data/QuickOpenSceneConfigData.asset"));
+                        pluginPath = SceneConfigManage.GetPluginPath();
                         EditorUserSettings.SetConfigValue("pluginPath", pluginPath);
                     }
                     else
                     {
                         pluginPath = EditorUserSettings.GetConfigValue("pluginPath");
+                        if (!Directory.Exists(pluginPath))
+                        {
+                            pluginPath = SceneConfigManage.GetPluginPath();
+                        }
                     }
                 }
                 return pluginPath;
@@ -83,9 +88,15 @@ namespace QuickOpenScene
             {
                 if (sceneConfig == null)
                 {
-                    string guid = AssetDatabase.FindAssets("QuickOpenSceneConfigData")[0];
-                    string path = AssetDatabase.GUIDToAssetPath(guid);
-                    sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(path);
+                    string path = pluginPath + "/Data/QuickOpenSceneConfigData.asset";
+                    if (File.Exists(path))
+                    {
+                        sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(path);
+                    }
+                    else
+                    {
+                        sceneConfig = SceneConfigManage.CreateSceneConfig();
+                    }
                 }
                 return sceneConfig;
             }
@@ -96,17 +107,7 @@ namespace QuickOpenScene
         {
             get
             {
-                if (latestVersion == null)
-                {
-                    latestVersion = currVersion;
-                }
-                else
-                {
-                    if (latestVersion != SessionState.GetString("QuickOpenSceneLatestVersion", currVersion))
-                    {
-                        latestVersion = SessionState.GetString("QuickOpenSceneLatestVersion", currVersion);
-                    }
-                }
+                latestVersion = SessionState.GetString("QuickOpenSceneLatestVersion", currVersion);
                 return latestVersion;
             }
             set
@@ -163,6 +164,18 @@ namespace QuickOpenScene
             }
         }
 
-
+        public static bool NeedUpdate
+        {
+            get
+            {
+                needUpdata = SessionState.GetBool("NeedUpdate", false);
+                return needUpdata;
+            }
+            set
+            {
+                SessionState.SetBool("NeedUpdate", value);
+                needUpdata = value;
+            }
+        }
     }
 }

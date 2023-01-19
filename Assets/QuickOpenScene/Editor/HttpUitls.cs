@@ -21,6 +21,12 @@ namespace QuickOpenScene
                     Config.LatestVersion = temp.tag_name;
                     Config.LatestDownloadURL = temp.assets[0].browser_download_url;
                     Config.IsDown = true;
+                    Version currVersion = new Version(Config.currVersion);
+                    Version latestVersion = new Version(Config.LatestVersion);
+                    if (currVersion < latestVersion)
+                    {
+                        Config.NeedUpdate = true;
+                    }
                 }
             }));
         }

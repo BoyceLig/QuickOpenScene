@@ -109,5 +109,43 @@ namespace QuickOpenScene
             TextAsset logText = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
             return logText.text;
         }
+
+        /// <summary>
+        /// 获取插件路径
+        /// </summary>
+        /// <returns>插件根路径（最后不带/）</returns>
+        public static string GetPluginPath()
+        {
+            string[] guids = AssetDatabase.FindAssets("GithubJsonData");
+            if (guids != null && guids.Length > 0)
+            {
+                foreach (string guid in guids)
+                {
+                    if (AssetDatabase.GUIDToAssetPath(guid).Contains("QuickOpenScene/Editor/GithubJsonData.cs"))
+                    {
+                        string githubJsonDataPath = AssetDatabase.GUIDToAssetPath(guid);
+                        return githubJsonDataPath.Remove(githubJsonDataPath.IndexOf("/Editor/GithubJsonData.cs"));
+                    }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 创建QuickOpenSceneConfigData文件
+        /// </summary>
+        /// <returns>SceneConfig</returns>
+        public static SceneConfig CreateSceneConfig()
+        {
+            string dataFolderPath = Config.PluginPath + "/Data";
+            string sceneConfigPath = dataFolderPath + "/QuickOpenSceneConfigData.asset";
+            if (!Directory.Exists(dataFolderPath))
+            {
+                AssetDatabase.CreateFolder(Config.PluginPath, "Data");
+            }
+            SceneConfig sceneConfig = CreateInstance<SceneConfig>();
+            AssetDatabase.CreateAsset(sceneConfig, sceneConfigPath);
+            return sceneConfig;
+        }
     }
 }

@@ -89,7 +89,7 @@ namespace QuickOpenScene
             GUILayout.Label("最新版本：", GUILayout.ExpandWidth(false));
             if (Config.LatestVersion != string.Empty)
             {
-                if (float.Parse(Config.LatestVersion) > float.Parse(Config.currVersion))
+                if (Config.NeedUpdate)
                 {
                     Color cache = GUI.color;
                     GUI.color = Color.red;
@@ -105,9 +105,9 @@ namespace QuickOpenScene
                 {
                     var cache = GUI.color;
                     GUI.color = Color.green;
-                    GUILayout.Label(Config.LatestVersion, GUILayout.ExpandWidth(false));                    
+                    GUILayout.Label(Config.LatestVersion, GUILayout.ExpandWidth(false));
                     GUILayout.Label("-", GUILayout.ExpandWidth(false));
-                    GUILayout.Label("你使用的是最新版本", GUILayout.ExpandWidth(false));
+                    GUILayout.Label("最新版本", GUILayout.ExpandWidth(false));
                     GUI.color = cache;
                 }
             }
