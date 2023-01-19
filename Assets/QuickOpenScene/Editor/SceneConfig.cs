@@ -28,12 +28,7 @@ namespace QuickOpenScene
         [SerializeField]
         string scenePath;
         [SerializeField]
-        string sceneGUID;
-
-        public enum SceneConfigInfoType
-        {
-            scenePath, sceneGUID
-        }
+        string sceneGUID;        
 
         public SceneConfigInfo(string sceneInfo, SceneConfigInfoType sceneConfigInfoType)
         {

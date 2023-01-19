@@ -5,10 +5,9 @@ namespace QuickOpenScene
 {
     public class AboutWindow : EditorWindow
     {
-        GUIStyle titleStyle, linkStyle,nameStyle;
+        GUIStyle titleStyle, linkStyle, nameStyle;
         Vector2 logscrollPosition;
         string logText;
-        string latestVersion, latestDownloadURL;
 
         [MenuItem(Config.MenuPath.aboutWindow, priority = 2001)]
         static void OpenAbout()
@@ -23,10 +22,8 @@ namespace QuickOpenScene
         private void OnEnable()
         {
             logText = SceneConfigManage.GetLogText();
-            latestVersion = SceneConfigManage.GetJsonData("Assets/QuickOpenScene/Editor/test.json",SceneConfigManage.GetJsonType.LatestTag);
-            latestDownloadURL = SceneConfigManage.GetJsonData("Assets/QuickOpenScene/Editor/test.json", SceneConfigManage.GetJsonType.LatestDownloadURL);
         }
-        private void OnGUI()
+        public void OnGUI()
         {
             if (titleStyle == null)
             {
@@ -35,20 +32,20 @@ namespace QuickOpenScene
                 titleStyle.alignment = TextAnchor.MiddleCenter;
             }
 
-            if (nameStyle ==null)
+            if (nameStyle == null)
             {
                 nameStyle = new GUIStyle(EditorStyles.label);
-                nameStyle.alignment= TextAnchor.MiddleRight;
+                nameStyle.alignment = TextAnchor.MiddleRight;
             }
 
             if (linkStyle == null)
             {
                 linkStyle = new GUIStyle(EditorStyles.label);
+                linkStyle.fontSize = 12;
                 linkStyle.normal.textColor = new Color(0.2980392f, 0.4901961f, 1f);
                 linkStyle.hover.textColor = Color.white;
                 linkStyle.active.textColor = Color.gray;
-                linkStyle.alignment = TextAnchor.MiddleLeft;
-                linkStyle.margin.left = 8;
+                linkStyle.margin.top = 3;
             }
 
             EditorGUILayout.Separator();
@@ -65,24 +62,57 @@ namespace QuickOpenScene
 
             //相关信息部分
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("相关链接：");
-            if (GUILayout.Button("Github", linkStyle))
+            GUILayout.Label("相关链接：", GUILayout.ExpandWidth(false));
+            if (GUILayout.Button("Github", linkStyle, GUILayout.ExpandWidth(false)))
             {
                 Application.OpenURL(Config.About.githubURL);
             }
-            GUILayout.Label("-");
-            if (GUILayout.Button("Github Releases", linkStyle))
+            GUILayout.Label("-", GUILayout.ExpandWidth(false));
+            if (GUILayout.Button("Github Releases", linkStyle, GUILayout.ExpandWidth(false)))
             {
                 Application.OpenURL(Config.About.githubReleasesURL);
             }
-            GUILayout.Label("-");
-            if (GUILayout.Button("Github Issues", linkStyle))
+            GUILayout.Label("-", GUILayout.ExpandWidth(false));
+            if (GUILayout.Button("Github Issues", linkStyle, GUILayout.ExpandWidth(false)))
             {
                 Application.OpenURL(Config.About.githubIssuesURL);
-            }            
+            }
             EditorGUILayout.EndHorizontal();
-            GUILayout.Label("当前版本：" + Config.version);
-            GUILayout.Label("最新版本：" + latestVersion);
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("当前版本：", GUILayout.ExpandWidth(false));
+            GUILayout.Label(Config.currVersion, GUILayout.ExpandWidth(false));
+
+            GUILayout.EndHorizontal();
+
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("最新版本：", GUILayout.ExpandWidth(false));
+            if (Config.LatestVersion != string.Empty)
+            {
+                if (float.Parse(Config.LatestVersion) > float.Parse(Config.currVersion))
+                {
+                    Color cache = GUI.color;
+                    GUI.color = Color.red;
+                    GUILayout.Label(Config.LatestVersion, GUILayout.ExpandWidth(false));
+                    GUI.color = cache;
+                    GUILayout.Label("-", GUILayout.ExpandWidth(false));
+                    if (GUILayout.Button("下载最新版", linkStyle, GUILayout.ExpandWidth(false)))
+                    {
+                        Application.OpenURL(Config.latestDownloadURL);
+                    }
+                }
+                else
+                {
+                    var cache = GUI.color;
+                    GUI.color = Color.green;
+                    GUILayout.Label(Config.LatestVersion, GUILayout.ExpandWidth(false));                    
+                    GUILayout.Label("-", GUILayout.ExpandWidth(false));
+                    GUILayout.Label("你使用的是最新版本", GUILayout.ExpandWidth(false));
+                    GUI.color = cache;
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            Repaint();
         }
     }
 }

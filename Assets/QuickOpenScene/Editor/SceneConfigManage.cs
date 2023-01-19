@@ -7,16 +7,9 @@ namespace QuickOpenScene
 {
     public class SceneConfigManage : Editor
     {
-        public enum GetJsonType
-        {
-            LatestTag, LatestDownloadURL
-        }
-
         [MenuItem(Config.MenuPath.addCurrScene)]
         static void AddCurrSceneConfig()
         {
-            //获取配置文件
-            SceneConfig sceneConfig = GetSceneConfigObject();
             //已选择的guids
             string[] guids = Selection.assetGUIDs;
             List<string> direPaths = new List<string>();
@@ -31,7 +24,7 @@ namespace QuickOpenScene
                 {
                     if (Path.GetExtension(path).Contains(".unity"))
                     {
-                        AddScene(sceneConfig, path, SceneConfigInfo.SceneConfigInfoType.scenePath);
+                        AddScene(path, SceneConfigInfoType.scenePath);
                     }
                 }
             }
@@ -41,18 +34,17 @@ namespace QuickOpenScene
 
             foreach (var sceneGuid in sceneGuids)
             {
-                AddScene(sceneConfig, sceneGuid, SceneConfigInfo.SceneConfigInfoType.sceneGUID);
+                AddScene(sceneGuid, SceneConfigInfoType.sceneGUID);
             }
         }
 
         [MenuItem(Config.MenuPath.addAllScene)]
         static void AddAllSceneConfig()
         {
-            SceneConfig sceneConfig = GetSceneConfigObject();
             string[] guids = AssetDatabase.FindAssets("t:Scene");
             foreach (var guid in guids)
             {
-                AddScene(sceneConfig, guid, SceneConfigInfo.SceneConfigInfoType.sceneGUID);
+                AddScene(guid, SceneConfigInfoType.sceneGUID);
             }
         }
 
@@ -62,10 +54,10 @@ namespace QuickOpenScene
         /// <param name="sceneConfig">配置文件</param>
         /// <param name="info">路径或者guid</param>
         /// <param name="sceneConfigInfoType">info 的类型</param>
-        public static void AddScene(SceneConfig sceneConfig, string info, SceneConfigInfo.SceneConfigInfoType sceneConfigInfoType)
+        public static void AddScene(string info, SceneConfigInfoType sceneConfigInfoType)
         {
             string path;
-            if (sceneConfigInfoType == SceneConfigInfo.SceneConfigInfoType.sceneGUID)
+            if (sceneConfigInfoType == SceneConfigInfoType.sceneGUID)
             {
                 path = AssetDatabase.GUIDToAssetPath(info);
             }
@@ -76,9 +68,9 @@ namespace QuickOpenScene
             if (File.Exists(path) && Path.GetExtension(path).Contains(".unity") && path.StartsWith("Assets"))
             {
                 bool exist = false;
-                if (sceneConfig.sceneInfos.Count > 0)
+                if (Config.SceneConfigData.sceneInfos.Count > 0)
                 {
-                    foreach (var item in sceneConfig.sceneInfos)
+                    foreach (var item in Config.SceneConfigData.sceneInfos)
                     {
                         if (item.ScenePath == path)
                         {
@@ -89,8 +81,8 @@ namespace QuickOpenScene
                 }
                 if (!exist)
                 {
-                    SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfo.SceneConfigInfoType.scenePath);
-                    sceneConfig.sceneInfos.Add(temp);
+                    SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
+                    Config.SceneConfigData.sceneInfos.Add(temp);
                     Debug.Log("添加 " + temp.SceneName + " 场景成功！", temp.Scene);
                 }
             }
@@ -101,22 +93,10 @@ namespace QuickOpenScene
         /// </summary>
         /// <param name="sceneConfig">配置文件</param>
         /// <param name="sceneConfigInfo">场景的配置信息</param>
-        public static void RemoveSceneInfo(SceneConfig sceneConfig, SceneConfigInfo sceneConfigInfo)
+        public static void RemoveSceneInfo(SceneConfigInfo sceneConfigInfo)
         {
             Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
-            sceneConfig.sceneInfos.Remove(sceneConfigInfo);
-        }
-
-        /// <summary>
-        /// 获取SceneConfig配置文件信息
-        /// </summary>
-        /// <returns></returns>
-        public static SceneConfig GetSceneConfigObject()
-        {
-            string guid = AssetDatabase.FindAssets("QuickOpenSceneConfigData")[0];
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            SceneConfig sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(path);
-            return sceneConfig;
+            Config.SceneConfigData.sceneInfos.Remove(sceneConfigInfo);
         }
 
         /// <summary>
@@ -125,27 +105,9 @@ namespace QuickOpenScene
         /// <returns></returns>
         public static string GetLogText()
         {
-            string guid = AssetDatabase.FindAssets("QuickOpenSceneConfigData")[0];
-            string path = AssetDatabase.GUIDToAssetPath(guid);
-            path = path.Remove(path.IndexOf("Data")) + "ChangeLog.txt";
+            string path = Config.PluginPath + "/ChangeLog.txt";
             TextAsset logText = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
             return logText.text;
-        }
-
-        public static string GetJsonData(string path, GetJsonType getJsonType)
-        {
-            string jsonText = AssetDatabase.LoadAssetAtPath<TextAsset>(path).text;
-            GithubJsonData json = JsonUtility.FromJson<GithubJsonData>(jsonText);
-            switch (getJsonType)
-            {
-                case GetJsonType.LatestTag:
-                    return json.tag_name;
-                case GetJsonType.LatestDownloadURL:
-                    return json.assets[0].browser_download_url;
-                default:
-                    return null;
-            }
-            
         }
     }
 }
