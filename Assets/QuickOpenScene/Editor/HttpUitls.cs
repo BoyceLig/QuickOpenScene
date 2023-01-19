@@ -17,7 +17,7 @@ namespace QuickOpenScene
                 if (temp != null)
                 {
                     Config.LatestVersion = temp.tag_name;
-                    Config.latestDownloadURL = temp.assets[0].browser_download_url;
+                    Config.LatestDownloadURL = temp.assets[0].browser_download_url;
                 }
             }));
         }
@@ -25,7 +25,7 @@ namespace QuickOpenScene
         IEnumerator StartRequest(string url, Action success = null)
         {
             using (www = UnityWebRequest.Get(url))
-            {
+            {                
                 yield return www.SendWebRequest();
 
                 while (www.isDone == false)

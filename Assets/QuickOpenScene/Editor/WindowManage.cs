@@ -167,7 +167,7 @@ namespace QuickOpenScene
             {
                 if (GUILayout.Button($"Version: {Config.currVersion}（需要更新）", versionStyle))
                 {
-                    Application.OpenURL(Config.latestDownloadURL);
+                    Application.OpenURL(Config.LatestDownloadURL);
                 }
                 Repaint();
             }

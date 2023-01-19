@@ -24,7 +24,7 @@ namespace QuickOpenScene
         public const string currVersion = "1.5";
         static bool isDown;
         static string latestVersion;
-        public static string latestDownloadURL;
+        static string latestDownloadURL;
         //插件路径
         static string pluginPath;
         //场景配置文件数据
@@ -91,13 +91,21 @@ namespace QuickOpenScene
             }
         }
 
+        //最新版本
         public static string LatestVersion
         {
             get
             {
                 if (latestVersion == null)
                 {
-                    return currVersion;
+                    latestVersion = currVersion;
+                }
+                else
+                {
+                    if (latestVersion != SessionState.GetString("QuickOpenSceneLatestVersion", currVersion))
+                    {
+                        latestVersion = SessionState.GetString("QuickOpenSceneLatestVersion", currVersion);
+                    }
                 }
                 return latestVersion;
             }
@@ -106,21 +114,51 @@ namespace QuickOpenScene
                 if (latestVersion != value)
                 {
                     latestVersion = value;
+                    SessionState.SetString("QuickOpenSceneLatestVersion", value);
                 }
 
             }
         }
 
+        public static string LatestDownloadURL
+        {
+            get
+            {
+                if (latestDownloadURL == null)
+                {
+                    latestDownloadURL = About.githubReleasesURL;
+                }
+                else
+                {
+                    if (latestDownloadURL != SessionState.GetString("QuickOpenSceneLatestDownloadURL", About.githubReleasesURL))
+                    {
+                        latestDownloadURL = SessionState.GetString("QuickOpenSceneLatestDownloadURL", About.githubReleasesURL);
+                    }
+                }
+                return latestDownloadURL;
+            }
+            set
+            {
+                if (latestDownloadURL != value)
+                {
+                    latestDownloadURL = value;
+                    SessionState.SetString("QuickOpenSceneLatestDownloadURL", value);
+                }
+
+            }
+        }
+
+        //是否已经下载了js
         public static bool IsDown
         {
             get
             {
-                isDown = SessionState.GetBool("isDown", false);
+                isDown = SessionState.GetBool("QuickOpenSceneIsDown", false);
                 return isDown;
             }
             set
             {
-                SessionState.SetBool("isDown", value);
+                SessionState.SetBool("QuickOpenSceneIsDown", value);
                 isDown = value;
             }
         }

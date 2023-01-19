@@ -98,7 +98,7 @@ namespace QuickOpenScene
                     GUILayout.Label("-", GUILayout.ExpandWidth(false));
                     if (GUILayout.Button("下载最新版", linkStyle, GUILayout.ExpandWidth(false)))
                     {
-                        Application.OpenURL(Config.latestDownloadURL);
+                        Application.OpenURL(Config.LatestDownloadURL);
                     }
                 }
                 else
