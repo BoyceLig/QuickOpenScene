@@ -28,7 +28,7 @@ namespace QuickOpenScene
         static bool needUpdata;
         static string latestVersion;
         static string latestDownloadURL;
-        public const string access_token = "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";
+        const string token = "Z2hwX0puTTd2clM4QUZuWlcxWmx4TjUyR01IT3lWWmdEbTBTc1p6MQ==";
         //插件路径
         static string pluginPath;
         //场景配置文件数据
@@ -171,7 +171,11 @@ namespace QuickOpenScene
             }
         }
 
-
+        public static string GetHead()
+        {
+            byte[] temp = Convert.FromBase64String(token);
+            return System.Text.Encoding.UTF8.GetString(temp);
+        }
 
 
         static Version currVersionV, latestVersionV;

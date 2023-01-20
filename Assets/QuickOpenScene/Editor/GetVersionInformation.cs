@@ -30,7 +30,7 @@ namespace QuickOpenScene
         {
             var uri = new Uri(url);
             request = UnityWebRequest.Get(uri);
-            request.SetRequestHeader("Authorization", "token " + access_token); ;
+            request.SetRequestHeader("Authorization", "token " + GetHead()); ;
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
