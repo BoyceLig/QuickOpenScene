@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEngine;
 
 namespace QuickOpenScene
 {
@@ -8,7 +9,7 @@ namespace QuickOpenScene
         static InvalidDataChecker()
         {
             new GetVersionInformation().GetJson();
-            if (NeedUpdate)
+            if (NeedUpdate && !EditorWindow.HasOpenInstances<AboutWindow>() && AutoOpenAbout == 0)
             {
                 AboutWindow.OpenAbout();
             }

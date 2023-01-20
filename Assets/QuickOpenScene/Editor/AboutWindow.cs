@@ -8,11 +8,12 @@ namespace QuickOpenScene
         GUIStyle titleStyle, linkStyle, nameStyle, logTextStyle;
         Vector2 logscrollPosition;
         string logText;
+        string[] autoOpenAboutString = new string[] { "有更新时自动弹出", "永不弹出" };
 
         [MenuItem(Config.MenuPath.aboutWindow, priority = 2001)]
         public static void OpenAbout()
         {
-            Vector2 defaultSize = new Vector2(400, 500); ;
+            Vector2 defaultSize = new Vector2(405, 720); ;
             AboutWindow window = GetWindow<AboutWindow>(true, "关于");
 
             window.minSize = defaultSize;
@@ -54,6 +55,9 @@ namespace QuickOpenScene
                 logTextStyle.wordWrap = false;
             }
 
+            //autoOpenAboutStyle = new GUIStyle(EditorStyles.popup);
+            //autoOpenAboutStyle.alignment = TextAnchor.MiddleCenter;
+
             EditorGUILayout.Separator();
             //标题
             GUILayout.Label("快速打开场景（Quick Open Scene）", titleStyle);
@@ -68,7 +72,7 @@ namespace QuickOpenScene
 
             //相关信息部分
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("相关链接：", GUILayout.ExpandWidth(false));
+            GUILayout.Label("相关链接：", EditorStyles.boldLabel, GUILayout.ExpandWidth(false));
             if (GUILayout.Button("Github", linkStyle, GUILayout.ExpandWidth(false)))
             {
                 Application.OpenURL(Config.URL.github);
@@ -86,13 +90,13 @@ namespace QuickOpenScene
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("当前版本：", GUILayout.ExpandWidth(false));
+            GUILayout.Label("当前版本：", EditorStyles.boldLabel, GUILayout.ExpandWidth(false));
             GUILayout.Label(Config.currVersion, GUILayout.ExpandWidth(false));
 
             GUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("最新版本：", GUILayout.ExpandWidth(false));
+            GUILayout.Label("最新版本：", EditorStyles.boldLabel, GUILayout.ExpandWidth(false));
             if (Config.LatestVersion != string.Empty)
             {
                 if (Config.NeedUpdate)
@@ -122,6 +126,13 @@ namespace QuickOpenScene
                 new GetVersionInformation().GetJson(true);
             }
 
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Separator();
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("关于界面：", EditorStyles.boldLabel);
+            Config.AutoOpenAbout = EditorGUILayout.Popup(Config.AutoOpenAbout, autoOpenAboutString, GUILayout.ExpandWidth(false),GUILayout.Width(120));
             EditorGUILayout.EndHorizontal();
             Repaint();
         }

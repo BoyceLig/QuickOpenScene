@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using UnityEditor;
 using UnityEngine.Windows;
 
@@ -31,18 +32,14 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.6";
-        static bool isDown;
-        static bool needUpdata;
-        static string latestVersion;
-        static string latestDownloadURL;
+        public const string currVersion = "1.7";
+        static bool isDown, needUpdata;
+        static string latestVersion, latestDownloadURL, pluginPath;
         const string token = "Z2hwX0puTTd2clM4QUZuWlcxWmx4TjUyR01IT3lWWmdEbTBTc1p6MQ==";
-        //插件路径
-        static string pluginPath;
         //场景配置文件数据
         static SceneConfig sceneConfig;
         //排序选项
-        static int sortbyIndex;
+        static int sortbyIndex, autoOpenAbout;
 
 
         //菜单路径
@@ -70,21 +67,10 @@ namespace QuickOpenScene
         {
             get
             {
-                if (pluginPath == null || pluginPath == string.Empty)
+                GetValue("PluginPath", ref pluginPath, SceneConfigManage.GetPluginPath());
+                if (!Directory.Exists(pluginPath))
                 {
-                    if (EditorUserSettings.GetConfigValue("pluginPath") == null || EditorUserSettings.GetConfigValue("pluginPath") == string.Empty)
-                    {
-                        pluginPath = SceneConfigManage.GetPluginPath();
-                        EditorUserSettings.SetConfigValue("pluginPath", pluginPath);
-                    }
-                    else
-                    {
-                        pluginPath = EditorUserSettings.GetConfigValue("pluginPath");
-                        if (!Directory.Exists(pluginPath))
-                        {
-                            pluginPath = SceneConfigManage.GetPluginPath();
-                        }
-                    }
+                    pluginPath = SceneConfigManage.GetPluginPath();
                 }
                 return pluginPath;
             }
@@ -220,22 +206,69 @@ namespace QuickOpenScene
         {
             get
             {
-                if (EditorUserSettings.GetConfigValue("sortbyIndex") == null || EditorUserSettings.GetConfigValue("sortbyIndex") == string.Empty)
-                {
-                    sortbyIndex = 0;
-                    EditorUserSettings.SetConfigValue("sortbyIndex", sortbyIndex.ToString());
-                }
-                else
-                {
-                    sortbyIndex = int.Parse(EditorUserSettings.GetConfigValue("sortbyIndex"));
-                }
-                return sortbyIndex;
+                return GetValue("SortbyIndex", ref sortbyIndex, 0);
             }
             set
             {
-                EditorUserSettings.SetConfigValue("sortbyIndex", value.ToString());
-                sortbyIndex = value;
+                sortbyIndex = SetValue("SortbyIndex", value);
             }
+        }
+
+        /// <summary>
+        /// 需要更新时是否自动打开关于面板
+        /// </summary>
+        public static int AutoOpenAbout
+        {
+            get
+            {
+                return GetValue("AutoOpenAbout", ref autoOpenAbout, 0);
+            }
+
+            set
+            {
+                autoOpenAbout = SetValue("AutoOpenAbout", value);
+            }
+        }
+
+
+
+
+
+
+        /// <summary>
+        /// 属性中的获取数据，如果为空则创建一个默认的并储存到 EditorUserSettings
+        /// </summary>
+        /// <typeparam name="T">数据的类型</typeparam>
+        /// <param name="name">储存命名</param>
+        /// <param name="t">私有函数</param>
+        /// <param name="defaultValue">默认数值</param>
+        /// <returns>最终的数值</returns>
+        static T GetValue<T>(string name, ref T t, T defaultValue)
+        {
+            if (EditorUserSettings.GetConfigValue(name) == null || EditorUserSettings.GetConfigValue(name) == string.Empty)
+            {
+                t = defaultValue;
+                EditorUserSettings.SetConfigValue(name, t.ToString());
+            }
+            else
+            {
+                TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+                t = (T)converter.ConvertFrom(EditorUserSettings.GetConfigValue(name));
+            }
+            return t;
+        }
+
+        /// <summary>
+        /// 赋值并保存到 EditorUserSettings
+        /// </summary>
+        /// <typeparam name="T">数据类型</typeparam>
+        /// <param name="name">储存命名</param>
+        /// <param name="value">值</param>
+        /// <returns>最终的数值</returns>
+        static T SetValue<T>(string name, T value)
+        {
+            EditorUserSettings.SetConfigValue(name, value.ToString());
+            return value;
         }
     }
 }
