@@ -5,7 +5,7 @@ namespace QuickOpenScene
 {
     public class AboutWindow : EditorWindow
     {
-        GUIStyle titleStyle, linkStyle, nameStyle;
+        GUIStyle titleStyle, linkStyle, nameStyle, logTextStyle;
         Vector2 logscrollPosition;
         string logText;
 
@@ -48,6 +48,12 @@ namespace QuickOpenScene
                 linkStyle.margin.top = 3;
             }
 
+            if (logTextStyle == null)
+            {
+                logTextStyle = new GUIStyle("WordWrappedMiniLabel");
+                logTextStyle.wordWrap = false;
+            }
+
             EditorGUILayout.Separator();
             //标题
             GUILayout.Label("快速打开场景（Quick Open Scene）", titleStyle);
@@ -56,7 +62,7 @@ namespace QuickOpenScene
             //升级日志部分
             GUILayout.Label("升级日志：", EditorStyles.boldLabel);
             logscrollPosition = GUILayout.BeginScrollView(logscrollPosition, "ProgressBarBack", GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-            GUILayout.Label(logText, "WordWrappedMiniLabel");
+            GUILayout.Label(logText, logTextStyle);
             GUILayout.EndScrollView();
             EditorGUILayout.Separator();
 
