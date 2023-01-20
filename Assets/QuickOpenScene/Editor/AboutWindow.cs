@@ -10,7 +10,7 @@ namespace QuickOpenScene
         string logText;
 
         [MenuItem(Config.MenuPath.aboutWindow, priority = 2001)]
-        static void OpenAbout()
+        public static void OpenAbout()
         {
             Vector2 defaultSize = new Vector2(400, 500); ;
             AboutWindow window = GetWindow<AboutWindow>(true, "关于");

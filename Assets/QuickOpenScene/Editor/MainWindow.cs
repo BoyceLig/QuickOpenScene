@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace QuickOpenScene
 {
-    public class WindowManage : EditorWindow
+    public class MainWindow: EditorWindow
     {
         Vector2 scrollViewPos;
         GUIStyle versionStyle;
@@ -14,7 +14,7 @@ namespace QuickOpenScene
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         static void Init()
         {
-            EditorWindow editorWindow = GetWindow<WindowManage>();
+            EditorWindow editorWindow = GetWindow<MainWindow>();
             editorWindow.titleContent = new GUIContent("快速打开场景");
             editorWindow.Show();
         }
@@ -167,7 +167,7 @@ namespace QuickOpenScene
             {
                 if (GUILayout.Button($"Version: {Config.currVersion}（需要更新）", versionStyle))
                 {
-                    Application.OpenURL(Config.LatestDownloadURL);
+                    AboutWindow.OpenAbout();
                 }
                 Repaint();
             }

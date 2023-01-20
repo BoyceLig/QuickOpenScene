@@ -7,7 +7,7 @@ namespace QuickOpenScene
     public class GithubJsonData
     {
         public string tag_name;
-        public List<assets> assets;
+        public assets[] assets;
     }
 
     [Serializable]

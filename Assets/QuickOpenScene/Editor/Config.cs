@@ -28,6 +28,7 @@ namespace QuickOpenScene
         static bool needUpdata;
         static string latestVersion;
         static string latestDownloadURL;
+        public const string access_token = "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";
         //插件路径
         static string pluginPath;
         //场景配置文件数据
