@@ -20,7 +20,7 @@ namespace QuickOpenScene
     }
 
     [Serializable]
-    public class SceneConfigInfo
+    public class SceneConfigInfo : IComparable<SceneConfigInfo>
     {
         [SerializeField]
         SceneAsset scene;
@@ -28,7 +28,7 @@ namespace QuickOpenScene
         [SerializeField]
         string scenePath;
         [SerializeField]
-        string sceneGUID;        
+        string sceneGUID;
 
         public SceneConfigInfo(string sceneInfo, SceneConfigInfoType sceneConfigInfoType)
         {
@@ -76,6 +76,12 @@ namespace QuickOpenScene
                     sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
                 }
             }
+        }
+
+        public int CompareTo(SceneConfigInfo other)
+        {
+            int a = SceneName.CompareTo(other.SceneName);
+            return a;
         }
 
         public string SceneName

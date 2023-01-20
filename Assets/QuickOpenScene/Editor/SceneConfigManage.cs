@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -146,6 +147,22 @@ namespace QuickOpenScene
             SceneConfig sceneConfig = CreateInstance<SceneConfig>();
             AssetDatabase.CreateAsset(sceneConfig, sceneConfigPath);
             return sceneConfig;
+        }
+
+        public static SceneConfigInfo[] SceneConfigInfosSort(int sortbyIndex)
+        {
+            switch (sortbyIndex)
+            {
+                //默认排序
+                case 0:
+                    return Config.SceneConfigData.sceneInfos.ToArray();
+                case 1:
+                    SceneConfigInfo[] tempSceneConfigInfos = Config.SceneConfigData.sceneInfos.ToArray();
+                    Array.Sort(tempSceneConfigInfos);
+                    return tempSceneConfigInfos;
+                default:
+                    return null;
+            }
         }
     }
 }

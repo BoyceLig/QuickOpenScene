@@ -20,6 +20,14 @@ namespace QuickOpenScene
         scenePath, sceneGUID
     }
 
+    /// <summary>
+    /// 排序
+    /// </summary>
+    public enum Sortby
+    {
+        Default, SceneName
+    }
+
     public class Config
     {
         //当前版本
@@ -33,6 +41,8 @@ namespace QuickOpenScene
         static string pluginPath;
         //场景配置文件数据
         static SceneConfig sceneConfig;
+        //排序选项
+        static int sortbyIndex;
 
 
         //菜单路径
@@ -89,7 +99,7 @@ namespace QuickOpenScene
             {
                 if (sceneConfig == null)
                 {
-                    string path = pluginPath + "/Data/QuickOpenSceneConfigData.asset";
+                    string path = PluginPath + "/Data/QuickOpenSceneConfigData.asset";
                     if (File.Exists(path))
                     {
                         sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(path);
@@ -200,6 +210,31 @@ namespace QuickOpenScene
                     needUpdata = true;
                 };
                 return needUpdata;
+            }
+        }
+
+        /// <summary>
+        /// 排序选项
+        /// </summary>
+        public static int SortbyIndex
+        {
+            get
+            {
+                if (EditorUserSettings.GetConfigValue("sortbyIndex") == null || EditorUserSettings.GetConfigValue("sortbyIndex") == string.Empty)
+                {
+                    sortbyIndex = 0;
+                    EditorUserSettings.SetConfigValue("sortbyIndex", sortbyIndex.ToString());
+                }
+                else
+                {
+                    sortbyIndex = int.Parse(EditorUserSettings.GetConfigValue("sortbyIndex"));
+                }
+                return sortbyIndex;
+            }
+            set
+            {
+                EditorUserSettings.SetConfigValue("sortbyIndex", value.ToString());
+                sortbyIndex = value;
             }
         }
     }
