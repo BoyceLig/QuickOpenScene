@@ -31,7 +31,7 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.5";
+        public const string currVersion = "1.6";
         static bool isDown;
         static bool needUpdata;
         static string latestVersion;
