@@ -3,13 +3,21 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static QuickOpenScene.MainWindow;
 
 namespace QuickOpenScene
 {
-    public class MainWindow: EditorWindow
+    public class MainWindow : EditorWindow
     {
+        public enum Sortby
+        {
+            默认, 命名
+        }
+
+        Sortby sortby;
+
         Vector2 scrollViewPos;
-        GUIStyle versionStyle;
+        GUIStyle versionStyle, buttonStyle;
 
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         static void Init()
@@ -21,12 +29,18 @@ namespace QuickOpenScene
 
         private void OnGUI()
         {
-            if (true)
+            if (versionStyle == null)
             {
                 versionStyle = new GUIStyle(EditorStyles.centeredGreyMiniLabel);
                 versionStyle.normal.textColor = Color.red;
                 versionStyle.hover.textColor = Color.white;
                 versionStyle.active.textColor = Color.gray;
+            }
+
+            if (buttonStyle == null)
+            {
+                buttonStyle = new GUIStyle("Button");
+                buttonStyle.alignment = TextAnchor.MiddleLeft;
             }
 
             EditorGUI.BeginDisabledGroup(true);
@@ -35,9 +49,11 @@ namespace QuickOpenScene
             EditorGUILayout.ObjectField(Config.SceneConfigData, typeof(SceneConfig), false);
             EditorGUILayout.EndHorizontal();
             EditorGUI.EndDisabledGroup();
+            EditorGUILayout.BeginHorizontal();
             GUILayout.Label("当前场景数量：" + Config.SceneConfigData.sceneInfos.Count);
-            GUIStyle buttonStyle = new GUIStyle("Button");
-            buttonStyle.alignment = TextAnchor.MiddleLeft;
+            GUILayout.Label("排序方式：");
+            sortby = (Sortby)EditorGUILayout.EnumPopup(sortby, GUILayout.ExpandWidth(false));
+            EditorGUILayout.EndHorizontal();
 
             if (Config.SceneConfigData.sceneInfos != null && Config.SceneConfigData.sceneInfos.Count > 0)
             {
