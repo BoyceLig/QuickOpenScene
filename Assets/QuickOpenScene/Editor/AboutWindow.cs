@@ -87,6 +87,12 @@ namespace QuickOpenScene
             {
                 Application.OpenURL(Config.URL.githubIssues);
             }
+            GUILayout.Label("-", GUILayout.ExpandWidth(false));
+            if (GUILayout.Button("加入QQ群", linkStyle, GUILayout.ExpandWidth(false)))
+            {
+                Application.OpenURL(Config.URL.qqGroup);
+                Debug.Log("QQ群号：203418914");
+            }
             EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.BeginHorizontal();

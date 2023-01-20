@@ -58,6 +58,7 @@ namespace QuickOpenScene
             public const string githubIssues = "https://github.com/BoyceLig/QuickOpenScene/issues";
             public const string githubReleases = "https://github.com/BoyceLig/QuickOpenScene/releases";
             public const string githubLatestAPI = "https://api.github.com/repos/BoyceLig/QuickOpenScene/releases/latest";
+            public const string qqGroup = "https://jq.qq.com/?_wv=1027&k=7ap29Woh";
         }
 
         /// <summary>
