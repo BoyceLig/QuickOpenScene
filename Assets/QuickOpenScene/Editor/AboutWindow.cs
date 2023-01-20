@@ -56,7 +56,7 @@ namespace QuickOpenScene
             //升级日志部分
             GUILayout.Label("升级日志：", EditorStyles.boldLabel);
             logscrollPosition = GUILayout.BeginScrollView(logscrollPosition, "ProgressBarBack", GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-            GUILayout.Label(logText, "WordWrappedMiniLabel", GUILayout.ExpandHeight(true));
+            GUILayout.Label(logText, "WordWrappedMiniLabel");
             GUILayout.EndScrollView();
             EditorGUILayout.Separator();
 
@@ -111,6 +111,11 @@ namespace QuickOpenScene
                     GUI.color = cache;
                 }
             }
+            if (GUILayout.Button("手动检查更新", GUILayout.ExpandWidth(false)))
+            {
+                new GetVersionInformation().GetJson(true);
+            }
+
             EditorGUILayout.EndHorizontal();
             Repaint();
         }
