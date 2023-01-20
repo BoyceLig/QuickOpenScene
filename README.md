@@ -63,8 +63,6 @@ Unity 快速打开场景工具
 
 ![image](https://user-images.githubusercontent.com/49801599/213753038-b4dc43c0-92ad-4d23-a68c-135e65ab5346.png)
 
-![image](https://user-images.githubusercontent.com/49801599/213753093-74d521e2-d670-4113-92ec-033cda12b18c.png)
-
 ![image](https://user-images.githubusercontent.com/49801599/212937203-50d65da7-cdef-47a3-a37f-6259ab3c73aa.png)
 
 ![image](https://user-images.githubusercontent.com/49801599/212841692-b4720eb7-c957-4bcd-ad2a-8862ab94211c.png)
@@ -72,3 +70,5 @@ Unity 快速打开场景工具
 ![image](https://user-images.githubusercontent.com/49801599/212841743-b0028e53-a7c2-4d38-850d-832945fffaa5.png)
 
 ![image](https://user-images.githubusercontent.com/49801599/212923658-e1d89f73-96fc-4c20-824c-0cab7591d8b5.png)
+
+![image](https://user-images.githubusercontent.com/49801599/213754677-efeb2332-f7c9-4bb5-a860-519aaddc1c3a.png)
