@@ -32,14 +32,12 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.7";
+        public const string currVersion = "1.8";
         static bool isDown, needUpdata;
-        static string latestVersion, latestDownloadURL, pluginPath;
-        const string token = "Z2hwX0puTTd2clM4QUZuWlcxWmx4TjUyR01IT3lWWmdEbTBTc1p6MQ==";
+        static string latestVersion, latestDownloadURL;
         //场景配置文件数据
         static SceneConfig sceneConfig;
         //排序选项
-        static int sortbyIndex, autoOpenAbout;
 
 
         //菜单路径
@@ -68,12 +66,11 @@ namespace QuickOpenScene
         {
             get
             {
-                GetValue("PluginPath", ref pluginPath, SceneConfigManage.GetPluginPath());
-                if (!Directory.Exists(pluginPath))
+                if (!Directory.Exists(GetValue("PluginPath", SceneConfigManage.GetPluginPath())))
                 {
-                    pluginPath = SceneConfigManage.GetPluginPath();
+                    SetValue("PluginPath", SceneConfigManage.GetPluginPath());
                 }
-                return pluginPath;
+                return GetValue("PluginPath", SceneConfigManage.GetPluginPath());
             }
         }
 
@@ -168,13 +165,6 @@ namespace QuickOpenScene
             }
         }
 
-        public static string GetHead()
-        {
-            byte[] temp = Convert.FromBase64String(token);
-            return System.Text.Encoding.UTF8.GetString(temp);
-        }
-
-
         static Version currVersionV, latestVersionV;
         /// <summary>
         /// 是否需要更新
@@ -205,14 +195,8 @@ namespace QuickOpenScene
         /// </summary>
         public static int SortbyIndex
         {
-            get
-            {
-                return GetValue("SortbyIndex", ref sortbyIndex, 0);
-            }
-            set
-            {
-                sortbyIndex = SetValue("SortbyIndex", value);
-            }
+            get => GetValue("SortbyIndex", 0);
+            set => SetValue("SortbyIndex", value);
         }
 
         /// <summary>
@@ -220,19 +204,21 @@ namespace QuickOpenScene
         /// </summary>
         public static int AutoOpenAbout
         {
-            get
-            {
-                return GetValue("AutoOpenAbout", ref autoOpenAbout, 0);
-            }
-
-            set
-            {
-                autoOpenAbout = SetValue("AutoOpenAbout", value);
-            }
+            get => GetValue("AutoOpenAbout", 0);
+            set => SetValue("AutoOpenAbout", value);
         }
 
-
-
+        public static DateTime UpdateTime
+        {
+            get
+            {
+                return DateTime.Parse(SessionState.GetString("UpdateTime", new DateTime(1971, 1, 1).ToString()));
+            }
+            set
+            {
+                SessionState.SetString("UpdateTime", value.ToString());
+            }
+        }
 
 
 
@@ -244,19 +230,19 @@ namespace QuickOpenScene
         /// <param name="t">私有函数</param>
         /// <param name="defaultValue">默认数值</param>
         /// <returns>最终的数值</returns>
-        static T GetValue<T>(string name, ref T t, T defaultValue)
+        static T GetValue<T>(string name, T defaultValue)
         {
             if (EditorUserSettings.GetConfigValue(name) == null || EditorUserSettings.GetConfigValue(name) == string.Empty)
             {
-                t = defaultValue;
-                EditorUserSettings.SetConfigValue(name, t.ToString());
+                EditorUserSettings.SetConfigValue(name, defaultValue.ToString());
+                return defaultValue;
+
             }
             else
             {
                 TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-                t = (T)converter.ConvertFrom(EditorUserSettings.GetConfigValue(name));
+                return (T)converter.ConvertFrom(EditorUserSettings.GetConfigValue(name));
             }
-            return t;
         }
 
         /// <summary>
@@ -266,10 +252,9 @@ namespace QuickOpenScene
         /// <param name="name">储存命名</param>
         /// <param name="value">值</param>
         /// <returns>最终的数值</returns>
-        static T SetValue<T>(string name, T value)
+        static void SetValue<T>(string name, T value)
         {
             EditorUserSettings.SetConfigValue(name, value.ToString());
-            return value;
         }
     }
 }

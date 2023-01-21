@@ -21,6 +21,7 @@ namespace QuickOpenScene
                         LatestVersion = temp.tag_name;
                         LatestDownloadURL = temp.assets[0].browser_download_url;
                         IsDown = true;
+                        UpdateTime = DateTime.Now;
                         if (displayUpdateMessage)
                         {
                             Debug.Log($"检查完成，当前版本：{currVersion} ,最新版本：{LatestVersion} ，{(NeedUpdate ? "需要更新,可自行选择更新。" : "不需要更新。")}");
@@ -35,7 +36,7 @@ namespace QuickOpenScene
         {
             var uri = new Uri(url);
             request = UnityWebRequest.Get(uri);
-            request.SetRequestHeader("Authorization", "token " + GetHead()); ;
+            //request.SetRequestHeader("Authorization", "token " + GetHead()); 
             yield return request.SendWebRequest();
 
             if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError)
