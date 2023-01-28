@@ -68,6 +68,7 @@ namespace QuickOpenScene
             }
             if (File.Exists(path) && Path.GetExtension(path).Contains(".unity") && path.StartsWith("Assets"))
             {
+                //查重
                 bool exist = false;
                 if (Config.SceneConfigData.sceneInfos.Count > 0)
                 {
@@ -84,6 +85,8 @@ namespace QuickOpenScene
                 {
                     SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
                     Config.SceneConfigData.sceneInfos.Add(temp);
+                    EditorUtility.SetDirty(Config.SceneConfigData);
+                    AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
                     Debug.Log("添加 " + temp.SceneName + " 场景成功！", temp.Scene);
                 }
             }
@@ -98,6 +101,8 @@ namespace QuickOpenScene
         {
             Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
             Config.SceneConfigData.sceneInfos.Remove(sceneConfigInfo);
+            EditorUtility.SetDirty(Config.SceneConfigData);
+            AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
         }
 
         /// <summary>

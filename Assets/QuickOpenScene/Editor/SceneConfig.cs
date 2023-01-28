@@ -16,7 +16,9 @@ namespace QuickOpenScene
             {
                 scene.Refresh();
             }
-        }
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssetIfDirty(this);
+        }        
     }
 
     [Serializable]
@@ -100,7 +102,7 @@ namespace QuickOpenScene
                 scene = value;
                 sceneName = scene.name;
                 scenePath = AssetDatabase.GetAssetPath(value);
-                sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
+                sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);   
             }
         }
 

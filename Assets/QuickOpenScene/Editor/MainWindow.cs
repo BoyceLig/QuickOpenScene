@@ -1,5 +1,4 @@
 using System.IO;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -13,7 +12,7 @@ namespace QuickOpenScene
 
         Vector2 scrollViewPos;
         GUIStyle versionStyle, buttonStyle, rightLableStyle;
-        string search;
+        string search = string.Empty;
 
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         static void Init()
