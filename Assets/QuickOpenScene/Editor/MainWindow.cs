@@ -10,9 +10,10 @@ namespace QuickOpenScene
     {
         string[] sortbys = new string[] { "默认排序", "命名排序" };
 
-        Vector2 scrollViewPos;
+        Vector2 scrollViewPos, mouseStartPos, mouseCurrentPos;
         GUIStyle versionStyle, buttonStyle, rightLableStyle;
         string search = string.Empty;
+
 
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         static void Init()
@@ -92,6 +93,7 @@ namespace QuickOpenScene
                             if (GUILayout.Button(new GUIContent("  " + SceneConfigManage.SceneConfigInfosSort(Config.SortbyIndex)[i].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
                             {
                                 SceneConfigManage.SceneConfigInfosSort(Config.SortbyIndex)[i].Refresh();
+
                                 //左键点击打开场景
                                 if (Event.current.button == 0)
                                 {
@@ -203,6 +205,23 @@ namespace QuickOpenScene
                     }
                 }
             }
+
+            //鼠标点下时记录初始位置
+            //if (Event.current.type == EventType.MouseDown)
+            //{
+            //    mouseStartPos = Event.current.mousePosition;
+            //}           
+
+            //鼠标长按拖拽时创建Lable
+            //if (Event.current.type == EventType.MouseDrag && Event.current.button == 0)
+            //{
+            //    mouseCurrentPos = Event.current.mousePosition;
+            //    GUI.Label(new Rect(mouseCurrentPos.x - 50, mouseCurrentPos.y - 10, 100, 20), "这里是一个示例", buttonStyle);               
+            //    Repaint();
+            //}
+            
+            
+
             GUILayout.FlexibleSpace();
 
             if (Config.NeedUpdate)
