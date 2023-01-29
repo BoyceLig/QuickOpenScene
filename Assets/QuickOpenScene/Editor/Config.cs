@@ -45,8 +45,8 @@ namespace QuickOpenScene
         {
             public const string quickOpenSceneWindow = "Tools/Quick Open Scene/快速打开场景 %&X";
             public const string aboutWindow = "Tools/Quick Open Scene/关于";
-            public const string addCurrScene = "Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到配置文件";
-            public const string addAllScene = "Assets/Tools/Quick Open Scene/添加所有场景到配置文件";
+            public const string addCurrScene = "Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到当前分组";
+            public const string addAllScene = "Assets/Tools/Quick Open Scene/添加所有场景到当前分组";
         }
 
         //关于界面的数据
@@ -199,6 +199,11 @@ namespace QuickOpenScene
             set => SetValue("SortbyIndex", value);
         }
 
+        public static int GroupIndexPanel
+        {
+            get => GetValue("GroupIndex", 0);
+            set => SetValue("GroupIndex", value);
+        }        
         /// <summary>
         /// 需要更新时是否自动打开关于面板
         /// </summary>

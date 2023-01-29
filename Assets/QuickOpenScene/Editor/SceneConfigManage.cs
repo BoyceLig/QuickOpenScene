@@ -25,7 +25,7 @@ namespace QuickOpenScene
                 {
                     if (Path.GetExtension(path).Contains(".unity"))
                     {
-                        AddScene(path, SceneConfigInfoType.scenePath);
+                        AddScene(Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0, path, SceneConfigInfoType.scenePath);
                     }
                 }
             }
@@ -35,7 +35,7 @@ namespace QuickOpenScene
 
             foreach (var sceneGuid in sceneGuids)
             {
-                AddScene(sceneGuid, SceneConfigInfoType.sceneGUID);
+                AddScene(Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0, sceneGuid, SceneConfigInfoType.sceneGUID);
             }
         }
 
@@ -45,17 +45,17 @@ namespace QuickOpenScene
             string[] guids = AssetDatabase.FindAssets("t:Scene");
             foreach (var guid in guids)
             {
-                AddScene(guid, SceneConfigInfoType.sceneGUID);
+                AddScene(Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0, guid, SceneConfigInfoType.sceneGUID);
             }
         }
 
         /// <summary>
         /// 添加场景到配置文件
         /// </summary>
-        /// <param name="sceneConfig">配置文件</param>
+        /// <param name="groupIndex">分组数(不是面板的分组数)</param>
         /// <param name="info">路径或者guid</param>
         /// <param name="sceneConfigInfoType">info 的类型</param>
-        public static void AddScene(string info, SceneConfigInfoType sceneConfigInfoType)
+        public static void AddScene(int groupIndex, string info, SceneConfigInfoType sceneConfigInfoType)
         {
             string path;
             if (sceneConfigInfoType == SceneConfigInfoType.sceneGUID)
@@ -70,9 +70,9 @@ namespace QuickOpenScene
             {
                 //查重
                 bool exist = false;
-                if (Config.SceneConfigData.sceneInfos.Count > 0)
+                if (Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Count > 0)
                 {
-                    foreach (var item in Config.SceneConfigData.sceneInfos)
+                    foreach (var item in Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos)
                     {
                         if (item.ScenePath == path)
                         {
@@ -84,25 +84,46 @@ namespace QuickOpenScene
                 if (!exist)
                 {
                     SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
-                    Config.SceneConfigData.sceneInfos.Add(temp);
+                    Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0].sceneInfos.Add(temp);
                     EditorUtility.SetDirty(Config.SceneConfigData);
                     AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
-                    Debug.Log("添加 " + temp.SceneName + " 场景成功！", temp.Scene);
+                    Debug.Log("添加 " + temp.SceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0].groupName + " 成功！", temp.Scene);
                 }
             }
         }
 
         /// <summary>
-        /// 在配置文件内删除场景配置信息
+        /// 在配置文件内删除对应分组内的场景配置信息
         /// </summary>
-        /// <param name="sceneConfig">配置文件</param>
+        /// <param name="groupIndex">分组数(不是面板的分组数)</param>
+        /// <param name="sceneConfigInfo">场景的配置信息</param>
+        public static void RemoveSceneInfo(int groupIndex, SceneConfigInfo sceneConfigInfo)
+        {
+            Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
+            Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
+            EditorUtility.SetDirty(Config.SceneConfigData);
+            AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+        }
+
+        /// <summary>
+        /// 删除所有分组内的当前场景配置信息
+        /// </summary>
         /// <param name="sceneConfigInfo">场景的配置信息</param>
         public static void RemoveSceneInfo(SceneConfigInfo sceneConfigInfo)
         {
-            Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
-            Config.SceneConfigData.sceneInfos.Remove(sceneConfigInfo);
-            EditorUtility.SetDirty(Config.SceneConfigData);
-            AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+            for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
+            {
+                for (int j = 0; j < Config.SceneConfigData.groupConfigs[i].sceneInfos.Count; j++)
+                {
+                    if (Config.SceneConfigData.groupConfigs[i].sceneInfos[j] == sceneConfigInfo)
+                    {
+                        Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.SceneName + " 场景成功！");
+                        Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
+                        EditorUtility.SetDirty(Config.SceneConfigData);
+                        AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+                    }
+                }
+            }         
         }
 
         /// <summary>
@@ -154,20 +175,6 @@ namespace QuickOpenScene
             return sceneConfig;
         }
 
-        public static SceneConfigInfo[] SceneConfigInfosSort(int sortbyIndex)
-        {
-            switch (sortbyIndex)
-            {
-                //默认排序
-                case 0:
-                    return Config.SceneConfigData.sceneInfos.ToArray();
-                case 1:
-                    SceneConfigInfo[] tempSceneConfigInfos = Config.SceneConfigData.sceneInfos.ToArray();
-                    Array.Sort(tempSceneConfigInfos);
-                    return tempSceneConfigInfos;
-                default:
-                    return null;
-            }
-        }
+
     }
 }

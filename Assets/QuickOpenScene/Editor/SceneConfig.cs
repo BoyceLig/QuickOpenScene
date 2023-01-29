@@ -8,17 +8,26 @@ namespace QuickOpenScene
     //[CreateAssetMenu(menuName = "Quick Open Scene/创建配置文件")]
     public class SceneConfig : ScriptableObject
     {
-        public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
+        public List<GroupConfigInfo> groupConfigs = new List<GroupConfigInfo>();
 
         void OnValidate()
         {
-            foreach (var scene in sceneInfos)
+            foreach (var group in groupConfigs)
             {
-                scene.Refresh();
+                foreach (var scene in group.sceneInfos)
+                {
+                    scene.Refresh();
+                }
             }
             EditorUtility.SetDirty(this);
             AssetDatabase.SaveAssetIfDirty(this);
-        }        
+        }
+    }
+    [Serializable]
+    public class GroupConfigInfo
+    {
+        public string groupName;
+        public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
     }
 
     [Serializable]
@@ -102,7 +111,7 @@ namespace QuickOpenScene
                 scene = value;
                 sceneName = scene.name;
                 scenePath = AssetDatabase.GetAssetPath(value);
-                sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);   
+                sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
             }
         }
 
