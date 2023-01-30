@@ -21,6 +21,7 @@ namespace QuickOpenScene
         {
             EditorWindow editorWindow = GetWindow<MainWindow>();
             editorWindow.titleContent = new GUIContent("快速打开场景");
+            editorWindow.minSize = new Vector2(260, 200);
             editorWindow.Show();
         }
 
@@ -83,12 +84,14 @@ namespace QuickOpenScene
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("分组：", GUILayout.ExpandWidth(false));
-            Config.GroupIndexPanel = EditorGUILayout.Popup(Config.GroupIndexPanel, Config.GroupStr, GUILayout.ExpandWidth(false));
+            Config.GroupIndexPanel = EditorGUILayout.Popup(Config.GroupIndexPanel, Config.GroupStr, GUILayout.ExpandWidth(true));
             //新建分组按钮
             if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("Toolbar Plus").image, "新建一个新的分组并跳转"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
             {
                 CreateGroupWindow window = GetWindow<CreateGroupWindow>(true);
                 window.titleContent = new GUIContent("创建分组");
+                window.minSize = new Vector2(260, 80);
+                window.maxSize = new Vector2(260, 80);
                 window.Show();
                 window.SendEvent(EditorGUIUtility.CommandEvent("Create"));
             }
@@ -98,6 +101,8 @@ namespace QuickOpenScene
             {
                 CreateGroupWindow window = GetWindow<CreateGroupWindow>(true);
                 window.titleContent = new GUIContent("重命名分组");
+                window.minSize = new Vector2(260, 80);
+                window.maxSize = new Vector2(260, 80);
                 window.Show();
                 window.SendEvent(EditorGUIUtility.CommandEvent("Rename"));
             }
@@ -335,12 +340,6 @@ namespace QuickOpenScene
     {
         string tempStr = "Default1";
         int commandIndex = 0;
-
-        public static void Init()
-        {
-            CreateGroupWindow groupNameWindow = GetWindow<CreateGroupWindow>(true);
-            groupNameWindow.Show();
-        }
 
         private void OnEnable()
         {
