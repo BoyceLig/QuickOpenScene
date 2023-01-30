@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -85,8 +84,7 @@ namespace QuickOpenScene
                 {
                     SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
                     Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0].sceneInfos.Add(temp);
-                    EditorUtility.SetDirty(Config.SceneConfigData);
-                    AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+                    SaveSceneConfigData();
                     Debug.Log("添加 " + temp.SceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0].groupName + " 成功！", temp.Scene);
                 }
             }
@@ -101,8 +99,7 @@ namespace QuickOpenScene
         {
             Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
-            EditorUtility.SetDirty(Config.SceneConfigData);
-            AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+            SaveSceneConfigData();
         }
 
         /// <summary>
@@ -119,11 +116,10 @@ namespace QuickOpenScene
                     {
                         Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.SceneName + " 场景成功！");
                         Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
-                        EditorUtility.SetDirty(Config.SceneConfigData);
-                        AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+                        SaveSceneConfigData();
                     }
                 }
-            }         
+            }
         }
 
         /// <summary>
@@ -175,6 +171,25 @@ namespace QuickOpenScene
             return sceneConfig;
         }
 
+        /// <summary>
+        /// 检查SceneConfig分组
+        /// </summary>
+        public static void CheckSceneConfig()
+        {
+            if (Config.SceneConfigData.groupConfigs.Count == 0)
+            {
+                Config.SceneConfigData.groupConfigs.Add(new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
+            }
+        }
+
+        /// <summary>
+        /// 保存数据
+        /// </summary>
+        public static void SaveSceneConfigData()
+        {
+            EditorUtility.SetDirty(Config.SceneConfigData);
+            AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+        }
 
     }
 }

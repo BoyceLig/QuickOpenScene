@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,6 +13,14 @@ namespace QuickOpenScene
 
         void OnValidate()
         {
+            for (int i = 0; i < groupConfigs.Count - 1; i++)
+            {
+                if (groupConfigs.Last().groupName == groupConfigs[i].groupName)
+                {
+                    groupConfigs.Last().groupName += 1;
+                }
+            }
+
             foreach (var group in groupConfigs)
             {
                 foreach (var scene in group.sceneInfos)
@@ -19,8 +28,7 @@ namespace QuickOpenScene
                     scene.Refresh();
                 }
             }
-            EditorUtility.SetDirty(this);
-            AssetDatabase.SaveAssetIfDirty(this);
+            SceneConfigManage.SaveSceneConfigData();
         }
     }
     [Serializable]
@@ -28,6 +36,11 @@ namespace QuickOpenScene
     {
         public string groupName;
         public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
+        public GroupConfigInfo(string groupName, List<SceneConfigInfo> sceneInfos)
+        {
+            this.groupName = groupName;
+            this.sceneInfos = sceneInfos;
+        }
     }
 
     [Serializable]

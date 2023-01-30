@@ -21,14 +21,6 @@ namespace QuickOpenScene
         scenePath, sceneGUID
     }
 
-    /// <summary>
-    /// 排序
-    /// </summary>
-    public enum Sortby
-    {
-        Default, SceneName
-    }
-
     public class Config
     {
         //当前版本
@@ -37,8 +29,8 @@ namespace QuickOpenScene
         static string latestVersion, latestDownloadURL;
         //场景配置文件数据
         static SceneConfig sceneConfig;
-        //排序选项
 
+        static string[] groupStr;
 
         //菜单路径
         public struct MenuPath
@@ -195,15 +187,23 @@ namespace QuickOpenScene
         /// </summary>
         public static int SortbyIndex
         {
-            get => GetValue("SortbyIndex", 0);
-            set => SetValue("SortbyIndex", value);
+            get => SessionState.GetInt("SortbyIndex", 0);
+            set => SessionState.SetInt("SortbyIndex", value);
         }
 
         public static int GroupIndexPanel
         {
-            get => GetValue("GroupIndex", 0);
-            set => SetValue("GroupIndex", value);
-        }        
+            get
+            {
+                int temp = SessionState.GetInt("GroupIndexPanel", 0);
+                if (temp > SceneConfigData.groupConfigs.Count)
+                {
+                    temp = SceneConfigData.groupConfigs.Count;
+                }
+                return temp;
+            }
+            set => SessionState.SetInt("GroupIndexPanel", value);
+        }
         /// <summary>
         /// 需要更新时是否自动打开关于面板
         /// </summary>
@@ -225,6 +225,24 @@ namespace QuickOpenScene
             }
         }
 
+        public static string[] GroupStr
+        {
+            get
+            {
+                if (groupStr == null || groupStr.Length != SceneConfigData.groupConfigs.Count + 1)
+                {
+                    groupStr = new string[SceneConfigData.groupConfigs.Count + 1];
+                    groupStr[0] = ("所有");
+                    for (int i = 0; i < SceneConfigData.groupConfigs.Count; i++)
+                    {
+                        groupStr[i + 1] = SceneConfigData.groupConfigs[i].groupName;
+                    }
+                }
+                return groupStr;
+            }
+            set { groupStr = value; }
+        }
+
 
 
         /// <summary>
@@ -241,7 +259,6 @@ namespace QuickOpenScene
             {
                 EditorUserSettings.SetConfigValue(name, defaultValue.ToString());
                 return defaultValue;
-
             }
             else
             {
