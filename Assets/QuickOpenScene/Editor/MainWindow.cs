@@ -12,11 +12,9 @@ namespace QuickOpenScene
     {
         string[] sortbys = new string[] { "默认排序", "命名排序" };
 
-        Vector2 scrollViewPos, mouseStartPos, mouseCurrentPos;
+        Vector2 scrollViewPos;
         GUIStyle versionStyle, buttonStyle, rightLableStyle;
         string search = string.Empty;
-
-        Rect buttonRect;
 
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         static void Init()
@@ -273,21 +271,6 @@ namespace QuickOpenScene
                 }
             }
 
-            //鼠标点下时记录初始位置
-            //if (Event.current.type == EventType.MouseDown)
-            //{
-            //    mouseStartPos = Event.current.mousePosition;
-            //}           
-
-            //鼠标长按拖拽时创建Lable
-            //if (Event.current.type == EventType.MouseDrag && Event.current.button == 0)
-            //{
-            //    mouseCurrentPos = Event.current.mousePosition;
-            //    GUI.Label(new Rect(mouseCurrentPos.x - 50, mouseCurrentPos.y - 10, 100, 20), "这里是一个示例", buttonStyle);               
-            //    Repaint();
-            //}
-
-
             GUILayout.FlexibleSpace();
 
             if (Config.NeedUpdate)
@@ -302,7 +285,6 @@ namespace QuickOpenScene
             {
                 EditorGUILayout.LabelField($"Version: {Config.currVersion}（最新版）", EditorStyles.centeredGreyMiniLabel);
             }
-
         }
 
 
@@ -401,12 +383,12 @@ namespace QuickOpenScene
                 {
                     //创建分组
                     case 0:
-                        Config.SceneConfigData.groupConfigs.Add(new GroupConfigInfo(tempStr, new List<SceneConfigInfo>()));                        
+                        Config.SceneConfigData.groupConfigs.Add(new GroupConfigInfo(tempStr, new List<SceneConfigInfo>()));
                         break;
                     //重命名分组
                     case 1:
                         Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].groupName = tempStr;
-                        Config.GroupStr[Config.GroupIndexPanel] = tempStr;                        
+                        Config.GroupStr[Config.GroupIndexPanel] = tempStr;
                         break;
                     default:
                         break;
