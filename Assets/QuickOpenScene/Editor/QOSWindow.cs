@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -8,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 namespace QuickOpenScene
 {
-    public class MainWindow : EditorWindow
+    public class QOSWindow : EditorWindow
     {
         string[] sortbys = new string[] { "默认排序", "命名排序" };
 
@@ -17,18 +16,24 @@ namespace QuickOpenScene
         string search = string.Empty;
 
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
-        static void Init()
+        static void Open()
         {
-            MainWindow mainWindow = GetWindow<MainWindow>();
+            QOSWindow mainWindow = GetWindow<QOSWindow>();
             mainWindow.titleContent = new GUIContent("快速打开场景");
             mainWindow.minSize = new Vector2(260, 200);
             mainWindow.Show();
+            SceneConfigManage.CheckSceneConfig();
         }
 
         private void OnEnable()
         {
-            SceneConfigManage.CheckSceneConfig();
+            //Debug.Log(Config.SceneConfigData.name);
+            //Debug.Log(Config.SceneConfigData.groupConfigs);
+            //Debug.Log(Config.SceneConfigData.groupConfigs.Count);
+            //SceneConfigManage.CheckSceneConfig();
         }
+        
+        
 
         private void OnGUI()
         {
@@ -335,67 +340,4 @@ namespace QuickOpenScene
             }
         }
     }
-
-    internal class CreateGroupWindow : EditorWindow
-    {
-        string tempStr = "Default1";
-        int commandIndex = 0;
-
-        private void OnEnable()
-        {
-            for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
-            {
-                if (Config.SceneConfigData.groupConfigs[i].groupName == tempStr)
-                {
-                    tempStr += 1;
-                }
-            }
-        }
-        public void OnGUI()
-        {
-            if (Event.current.commandName == "Create")
-            {
-                commandIndex = 0;
-            }
-            else if (Event.current.commandName == "Rename")
-            {
-                commandIndex = 1;
-            }
-
-            GUILayout.Label("请输入新的分组命名：");
-            tempStr = GUILayout.TextField(tempStr);
-            if (GUILayout.Button("确认"))
-            {
-                for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
-                {
-                    if (Config.SceneConfigData.groupConfigs[i].groupName == tempStr)
-                    {
-                        if (EditorUtility.DisplayDialog("命名警告", $"当前分组命名重复，点击确认命名将为：{tempStr + 1},点击取消重新输入命名。", "确认", "取消"))
-                        {
-                            tempStr += 1;
-                        }
-                        break;
-                    }
-                }
-
-                switch (commandIndex)
-                {
-                    //创建分组
-                    case 0:
-                        Config.SceneConfigData.groupConfigs.Add(new GroupConfigInfo(tempStr, new List<SceneConfigInfo>()));
-                        break;
-                    //重命名分组
-                    case 1:
-                        Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].groupName = tempStr;
-                        Config.GroupStr[Config.GroupIndexPanel] = tempStr;
-                        break;
-                    default:
-                        break;
-                }
-                SceneConfigManage.SaveSceneConfigData();
-                Close();
-            }
-        }
-    }
-
 }

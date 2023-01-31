@@ -1,0 +1,27 @@
+{
+  "name": "com.boycelig.quickopenscene",
+  "version": "1.8",
+  "displayName": "快速打开场景 (QuickOpenScene)",
+  "description": "此工具为方便Unity工程内有很多场景并且在不同位置，更方便的场景集合切换工具。",
+  "unity": "2020.3",
+  "dependencies": {},
+  "keywords": [
+    "quick",
+    "extender",
+    "custom",
+    "scene",
+    "button",
+    "gather",
+    "快速",
+    "扩展",
+    "打开场景",
+    "按钮",
+    "场景",
+    "场景集合"
+  ],
+  "author": {
+    "name": "Boyce Lig",
+    "email": "532762848@qq.com",
+    "url": "https://github.com/BoyceLig/QuickOpenScene"
+  }
+}
