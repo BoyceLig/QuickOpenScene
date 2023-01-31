@@ -19,10 +19,10 @@ namespace QuickOpenScene
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         static void Init()
         {
-            EditorWindow editorWindow = GetWindow<MainWindow>();
-            editorWindow.titleContent = new GUIContent("快速打开场景");
-            editorWindow.minSize = new Vector2(260, 200);
-            editorWindow.Show();
+            MainWindow mainWindow = GetWindow<MainWindow>();
+            mainWindow.titleContent = new GUIContent("快速打开场景");
+            mainWindow.minSize = new Vector2(260, 200);
+            mainWindow.Show();
         }
 
         private void OnEnable()

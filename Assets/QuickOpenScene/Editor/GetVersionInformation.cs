@@ -89,7 +89,7 @@ namespace QuickOpenScene
 
         public string UnixToDateTime(long unixTimeStamp)
         {
-            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1)); // 当地时区
+            DateTime startTime = TimeZoneInfo.ConvertTime(new DateTime(1970, 1, 1), TimeZoneInfo.FindSystemTimeZoneById("China Standard Time")); // 当地时区
             DateTime dt = startTime.AddSeconds(unixTimeStamp);
             return dt.ToString("HH:mm:ss");
         }
