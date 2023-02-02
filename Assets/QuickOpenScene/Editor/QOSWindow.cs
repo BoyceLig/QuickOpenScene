@@ -48,6 +48,7 @@ namespace QuickOpenScene
             GUI.Label(rect, new GUIContent(Config.GroupStr[Config.GroupIndexPanel] + "场景"));
         }
 
+        Rect sceneRect, removeRect;
         private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
             rect.height -= 4;
@@ -59,8 +60,9 @@ namespace QuickOpenScene
                 buttonStyle.alignment = TextAnchor.MiddleLeft;
             }
 
-            Rect sceneRect = new Rect(rect);
-            Rect removeRect = new Rect(rect);
+            sceneRect = new Rect(rect);
+            removeRect = new Rect(rect);
+
             removeRect.width = 30;
             sceneRect.width = rect.width - removeRect.width - 4;
             removeRect.position = new Vector2(sceneRect.position.x + sceneRect.width + 4, rect.y);
