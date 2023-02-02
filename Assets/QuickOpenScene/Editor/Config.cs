@@ -25,7 +25,7 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.8";
+        public const string currVersion = "1.8.1";
         static bool isDown, needUpdata;
         static string pluginPath, latestVersion, latestDownloadURL;
         static int autoOpenAbout;
