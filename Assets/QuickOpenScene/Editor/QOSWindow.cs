@@ -87,7 +87,10 @@ namespace QuickOpenScene
                 window.titleContent = new GUIContent("创建分组");
                 window.minSize = new Vector2(260, 80);
                 window.maxSize = new Vector2(260, 80);
+                Rect mainRect = GetWindow<QOSWindow>().position;
+                window.position = new Rect(mainRect.position + mainRect.size / 2 - new Vector2(window.position.size.x / 2, 0), window.minSize);                
                 window.Show();
+                window.Focus();
                 window.SendEvent(EditorGUIUtility.CommandEvent("Create"));
             }
             EditorGUI.BeginDisabledGroup(Config.GroupIndexPanel == 0);
@@ -98,7 +101,10 @@ namespace QuickOpenScene
                 window.titleContent = new GUIContent("重命名分组");
                 window.minSize = new Vector2(260, 80);
                 window.maxSize = new Vector2(260, 80);
+                Rect mainRect = GetWindow<QOSWindow>().position;
+                window.position = new Rect(mainRect.position + mainRect.size / 2 - new Vector2(window.position.size.x / 2, 0), window.minSize);
                 window.Show();
+                window.Focus();
                 window.SendEvent(EditorGUIUtility.CommandEvent("Rename"));
             }
             //删除分组
