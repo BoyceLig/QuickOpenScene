@@ -25,16 +25,6 @@ namespace QuickOpenScene
             SceneConfigManage.CheckSceneConfig();
         }
 
-        private void OnEnable()
-        {
-            //Debug.Log(Config.SceneConfigData.name);
-            //Debug.Log(Config.SceneConfigData.groupConfigs);
-            //Debug.Log(Config.SceneConfigData.groupConfigs.Count);
-            //SceneConfigManage.CheckSceneConfig();
-        }
-        
-        
-
         private void OnGUI()
         {
             //GUIStyle初始化

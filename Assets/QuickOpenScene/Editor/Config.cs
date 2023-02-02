@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.Windows;
 
 namespace QuickOpenScene
@@ -26,7 +27,8 @@ namespace QuickOpenScene
         //当前版本
         public const string currVersion = "1.8";
         static bool isDown, needUpdata;
-        static string latestVersion, latestDownloadURL;
+        static string pluginPath, latestVersion, latestDownloadURL;
+        static int autoOpenAbout;
         //场景配置文件数据
         static SceneConfig sceneConfig;
 
@@ -58,11 +60,11 @@ namespace QuickOpenScene
         {
             get
             {
-                if (!Directory.Exists(GetValue("PluginPath", SceneConfigManage.GetPluginPath())))
+                if (!Directory.Exists(GetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath())))
                 {
-                    SetValue("PluginPath", SceneConfigManage.GetPluginPath());
+                    SetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath());
                 }
-                return GetValue("PluginPath", SceneConfigManage.GetPluginPath());
+                return GetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath());
             }
         }
 
@@ -182,6 +184,7 @@ namespace QuickOpenScene
             }
         }
 
+        static int sortbyIndex;
         /// <summary>
         /// 排序选项
         /// </summary>
@@ -209,8 +212,8 @@ namespace QuickOpenScene
         /// </summary>
         public static int AutoOpenAbout
         {
-            get => GetValue("AutoOpenAbout", 0);
-            set => SetValue("AutoOpenAbout", value);
+            get => GetValue(ref autoOpenAbout, "AutoOpenAbout", 0);
+            set => SetValue(ref autoOpenAbout, "AutoOpenAbout", value);
         }
 
         public static DateTime UpdateTime
@@ -253,17 +256,26 @@ namespace QuickOpenScene
         /// <param name="t">私有函数</param>
         /// <param name="defaultValue">默认数值</param>
         /// <returns>最终的数值</returns>
-        static T GetValue<T>(string name, T defaultValue)
+        static T GetValue<T>(ref T t, string name, T defaultValue)
         {
-            if (EditorUserSettings.GetConfigValue(name) == null || EditorUserSettings.GetConfigValue(name) == string.Empty)
+            if (t == null)
             {
-                EditorUserSettings.SetConfigValue(name, defaultValue.ToString());
-                return defaultValue;
+                if (EditorUserSettings.GetConfigValue(name) == null || EditorUserSettings.GetConfigValue(name) == string.Empty)
+                {
+                    EditorUserSettings.SetConfigValue(name, defaultValue.ToString());
+                    t = defaultValue;
+                    return t;
+                }
+                else
+                {
+                    TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
+                    t = (T)converter.ConvertFrom(EditorUserSettings.GetConfigValue(name));
+                    return t;
+                }
             }
             else
             {
-                TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-                return (T)converter.ConvertFrom(EditorUserSettings.GetConfigValue(name));
+                return t;
             }
         }
 
@@ -272,11 +284,13 @@ namespace QuickOpenScene
         /// </summary>
         /// <typeparam name="T">数据类型</typeparam>
         /// <param name="name">储存命名</param>
+        /// <param name="t">私有函数</param>
         /// <param name="value">值</param>
         /// <returns>最终的数值</returns>
-        static void SetValue<T>(string name, T value)
+        static void SetValue<T>(ref T t, string name, T value)
         {
             EditorUserSettings.SetConfigValue(name, value.ToString());
+            t = value;
         }
     }
 }
