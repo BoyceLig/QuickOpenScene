@@ -60,7 +60,7 @@ internal class CreateGroupWindow : EditorWindow
                 default:
                     break;
             }
-            SceneConfigManage.SaveSceneConfigData();
+            EditorUtility.SetDirty(Config.SceneConfigData);
             Close();
         }
     }

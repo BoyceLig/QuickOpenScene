@@ -28,7 +28,7 @@ namespace QuickOpenScene
                     scene.Refresh();
                 }
             }
-            SceneConfigManage.SaveSceneConfigData();
+            EditorUtility.SetDirty(Config.SceneConfigData);
         }
     }
     [Serializable]

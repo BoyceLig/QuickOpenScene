@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.Windows;
 
 namespace QuickOpenScene
@@ -25,7 +24,7 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.8.1";
+        public const string currVersion = "1.9.0";
         static bool isDown, needUpdata;
         static string pluginPath, latestVersion, latestDownloadURL;
         static int autoOpenAbout;
