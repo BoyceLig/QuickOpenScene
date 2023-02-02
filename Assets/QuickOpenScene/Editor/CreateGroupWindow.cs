@@ -6,7 +6,7 @@ namespace QuickOpenScene
 {
     internal class CreateGroupWindow : EditorWindow
     {
-        string tempStr = "Default1";
+        string tempStr = "Default";
         int commandIndex = 0;
 
         void OnEnable()

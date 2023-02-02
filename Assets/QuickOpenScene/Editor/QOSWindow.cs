@@ -158,16 +158,16 @@ namespace QuickOpenScene
                     //删除场景按钮
                     if (GUI.Button(removeRect, EditorGUIUtility.IconContent("TreeEditor.Trash")) && Event.current.button == 0)
                     {
-                        if (Config.GroupIndexPanel > 0)
-                        {
-                            SceneConfigManage.RemoveSceneInfo(Config.GroupIndexPanel - 1, SceneConfigInfosSort()[index]);
-                        }
-                        else
+                        if (Config.GroupIndexPanel == 0)
                         {
                             if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{SceneConfigInfosSort()[index].SceneName}场景信息，是否删除？", "删除数据", "取消"))
                             {
                                 SceneConfigManage.RemoveSceneInfo(SceneConfigInfosSort()[index]);
                             }
+                        }
+                        else
+                        {
+                            SceneConfigManage.RemoveSceneInfo(Config.GroupIndexPanel - 1, SceneConfigInfosSort()[index]);
                         }
                     }
                     EditorGUI.EndDisabledGroup();
@@ -226,8 +226,8 @@ namespace QuickOpenScene
             GUILayout.FlexibleSpace();
             GUILayout.Label("排序方式：", rightLableStyle, GUILayout.ExpandWidth(false));
             Config.SortbyIndex = EditorGUILayout.Popup(Config.SortbyIndex, sortbys, GUILayout.ExpandWidth(false), GUILayout.Width(70));
-
             EditorGUILayout.EndHorizontal();
+
 
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label("分组：", GUILayout.ExpandWidth(false));
@@ -246,6 +246,7 @@ namespace QuickOpenScene
                 window.SendEvent(EditorGUIUtility.CommandEvent("Create"));
             }
             EditorGUI.BeginDisabledGroup(Config.GroupIndexPanel == 0);
+
             //重命名
             if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("editicon.sml").image, "重命名当前分组"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
             {
@@ -259,14 +260,22 @@ namespace QuickOpenScene
                 window.Focus();
                 window.SendEvent(EditorGUIUtility.CommandEvent("Rename"));
             }
+
+            EditorGUI.BeginDisabledGroup(Config.SceneConfigData.groupConfigs.Count == 1);
+
             //删除分组
             if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("TreeEditor.Trash").image, "删除当前分组和当前分组内的场景数据"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
             {
-                Config.SceneConfigData.groupConfigs.RemoveAt(Config.GroupIndexPanel - 1);
+                Config.GroupIndexPanel -= 1;
+                Config.SceneConfigData.groupConfigs.RemoveAt(Config.GroupIndexPanel);
                 EditorUtility.SetDirty(Config.SceneConfigData);
             }
             EditorGUI.EndDisabledGroup();
+            EditorGUI.EndDisabledGroup();
+
+
             EditorGUILayout.EndHorizontal();
+
 
             scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
             sceneButtons.DoLayoutList();
@@ -305,7 +314,7 @@ namespace QuickOpenScene
                 EditorGUILayout.LabelField($"Version: {Config.currVersion}（最新版）", EditorStyles.centeredGreyMiniLabel);
             }
         }
-        
+
         /// <summary>
         /// 匹配搜索结果是否包含字符
         /// </summary>
@@ -322,7 +331,7 @@ namespace QuickOpenScene
             else
             {
                 allSearchText = new string[1] { searchText };
-            }            
+            }
             foreach (var item in allSearchText)
             {
                 if (!sceneConfigInfo.SceneName.ToLower().Contains(item.ToLower()))

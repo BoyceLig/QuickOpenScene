@@ -69,6 +69,7 @@ namespace QuickOpenScene
             {
                 //查重
                 bool exist = false;
+                CheckSceneConfig();
                 if (Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Count > 0)
                 {
                     foreach (var item in Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos)
@@ -116,7 +117,7 @@ namespace QuickOpenScene
                     {
                         Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.SceneName + " 场景成功！");
                         Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
-                        EditorUtility.SetDirty(Config.SceneConfigData);                        
+                        EditorUtility.SetDirty(Config.SceneConfigData);
                     }
                 }
             }
