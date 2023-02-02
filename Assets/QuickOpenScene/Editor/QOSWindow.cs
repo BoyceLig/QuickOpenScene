@@ -25,9 +25,9 @@ namespace QuickOpenScene
             mainWindow.Show();
             SceneConfigManage.CheckSceneConfig();
         }
-        public void ScenesPanelRefresh()
+        void ScenesPanelRefresh()
         {
-            if (sceneButtons == null || sceneButtons.count != SceneConfigInfosSort().Length)
+            if (sceneButtons == null || sceneButtons.count != SceneConfigInfosSort().Length || Event.current.commandName == "GroupIndexPanelChange")
             {
                 sceneButtons = Config.GroupIndexPanel == 0 ?
                 new ReorderableList(SceneConfigInfosSort(), typeof(SceneConfigInfo)) :
@@ -38,22 +38,23 @@ namespace QuickOpenScene
                 sceneButtons.drawElementCallback = DrawElementCallback;
             }
         }
-        private void OnDestroy()
+        void OnDestroy()
         {
             SceneConfigManage.SaveSceneConfigData();
         }
 
-        private static void DrawHeaderCallback(Rect rect)
+        static void DrawHeaderCallback(Rect rect)
         {
             GUI.Label(rect, new GUIContent(Config.GroupStr[Config.GroupIndexPanel] + "场景"));
         }
 
         Rect sceneRect, removeRect;
-        private void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
+        void DrawElementCallback(Rect rect, int index, bool isActive, bool isFocused)
         {
             rect.height -= 4;
             rect.y += 2;
 
+            //GUIStyle初始化
             if (buttonStyle == null)
             {
                 buttonStyle = new GUIStyle("Button");
@@ -180,10 +181,11 @@ namespace QuickOpenScene
             }
         }
 
-        private void OnGUI()
+        void OnGUI()
         {
             ScenesPanelRefresh();
             sceneButtons.draggable = Config.SortbyIndex == 1 || Config.GroupIndexPanel == 0 ? false : true;
+           
             //GUIStyle初始化
             if (versionStyle == null)
             {
@@ -305,7 +307,7 @@ namespace QuickOpenScene
             }
         }
 
-        private static void OpenScene(string scenePath)
+        static void OpenScene(string scenePath)
         {
             //判断场景是否需要保存
             if (SceneManager.GetActiveScene().isDirty)
@@ -335,7 +337,7 @@ namespace QuickOpenScene
             }
         }
 
-        public static SceneConfigInfo[] SceneConfigInfosSort()
+        static SceneConfigInfo[] SceneConfigInfosSort()
         {
             SceneConfigInfo[] tempSceneConfigInfos;
             if (Config.GroupIndexPanel == 0)
@@ -378,7 +380,3 @@ namespace QuickOpenScene
         }
     }
 }
-
-
-
-

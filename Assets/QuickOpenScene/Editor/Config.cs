@@ -193,6 +193,7 @@ namespace QuickOpenScene
             set => SessionState.SetInt("SortbyIndex", value);
         }
 
+
         public static int GroupIndexPanel
         {
             get
@@ -204,8 +205,16 @@ namespace QuickOpenScene
                 }
                 return temp;
             }
-            set => SessionState.SetInt("GroupIndexPanel", value);
+            set
+            {
+                if (value != SessionState.GetInt("GroupIndexPanel", 0))
+                {
+                    SessionState.SetInt("GroupIndexPanel", value);
+                    EditorWindow.GetWindow<QOSWindow>().SendEvent(EditorGUIUtility.CommandEvent("GroupIndexPanelChange"));
+                }
+            }
         }
+
         /// <summary>
         /// 需要更新时是否自动打开关于面板
         /// </summary>
