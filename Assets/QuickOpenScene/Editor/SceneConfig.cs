@@ -32,7 +32,7 @@ namespace QuickOpenScene
         }
     }
     [Serializable]
-    public class GroupConfigInfo
+    public class GroupConfigInfo : IComparable<GroupConfigInfo>
     {
         public string groupName;
         public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
@@ -40,6 +40,13 @@ namespace QuickOpenScene
         {
             this.groupName = groupName;
             this.sceneInfos = sceneInfos;
+        }
+
+        //排序
+        public int CompareTo(GroupConfigInfo other)
+        {
+            int a = groupName.CompareTo(other.groupName);
+            return a;
         }
     }
 
@@ -102,6 +109,7 @@ namespace QuickOpenScene
             }
         }
 
+        //排序
         public int CompareTo(SceneConfigInfo other)
         {
             int a = SceneName.CompareTo(other.SceneName);
