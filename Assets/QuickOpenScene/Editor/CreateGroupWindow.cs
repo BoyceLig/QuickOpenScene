@@ -52,6 +52,8 @@ namespace QuickOpenScene
                     //创建分组
                     case 0:
                         Config.SceneConfigData.groupConfigs.Add(new GroupConfigInfo(tempStr, new List<SceneConfigInfo>()));
+                        //跳转到新建的组
+                        Config.GroupIndexPanel = Config.SceneConfigData.groupConfigs.Count;
                         break;
                     //重命名分组
                     case 1:
