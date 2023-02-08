@@ -55,11 +55,8 @@ namespace QuickOpenScene
             rect.y += 2;
 
             //GUIStyle初始化
-            if (buttonStyle == null )
-            {
-                buttonStyle = new GUIStyle("button");
-                buttonStyle.alignment = TextAnchor.MiddleLeft;
-            }
+            buttonStyle = new GUIStyle("button");
+            buttonStyle.alignment = TextAnchor.MiddleLeft;
 
             sceneRect = new Rect(rect);
             removeRect = new Rect(rect);
