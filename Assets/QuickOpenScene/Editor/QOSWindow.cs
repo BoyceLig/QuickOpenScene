@@ -345,7 +345,7 @@ namespace QuickOpenScene
         /// <param name="scenePath">场景路径</param>
         void OpenScene(string scenePath)
         {
-            void OpenSceneCheck(string path)
+            void SceneIsPlayingCheck(string path)
             {
                 if (EditorApplication.isPlaying)
                 {
@@ -367,12 +367,12 @@ namespace QuickOpenScene
                     //打开(保存场景)
                     case 0:
                         EditorSceneManager.SaveOpenScenes();
-                        OpenSceneCheck(scenePath);
+                        SceneIsPlayingCheck(scenePath);
                         break;
 
                     //打开(不保存)
                     case 2:
-                        OpenSceneCheck(scenePath);
+                        SceneIsPlayingCheck(scenePath);
                         break;
 
                     //取消
@@ -382,7 +382,7 @@ namespace QuickOpenScene
             }
             else
             {
-                OpenSceneCheck(scenePath);
+                SceneIsPlayingCheck(scenePath);
             }
         }
 
