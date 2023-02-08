@@ -55,9 +55,9 @@ namespace QuickOpenScene
             rect.y += 2;
 
             //GUIStyle初始化
-            if (buttonStyle == null)
+            if (buttonStyle == null )
             {
-                buttonStyle = new GUIStyle("Button");
+                buttonStyle = new GUIStyle("button");
                 buttonStyle.alignment = TextAnchor.MiddleLeft;
             }
 
@@ -348,6 +348,19 @@ namespace QuickOpenScene
         /// <param name="scenePath">场景路径</param>
         void OpenScene(string scenePath)
         {
+            void OpenSceneCheck(string path)
+            {
+                if (EditorApplication.isPlaying)
+                {
+                    EditorUtility.DisplayDialog("警告", "场景正在运行，请停止后再切换场景。", "确认");
+                }
+                else
+                {
+                    EditorSceneManager.OpenScene(path);
+                }
+
+            }
+
             //判断场景是否需要保存
             if (SceneManager.GetActiveScene().isDirty)
             {
@@ -357,12 +370,12 @@ namespace QuickOpenScene
                     //打开(保存场景)
                     case 0:
                         EditorSceneManager.SaveOpenScenes();
-                        EditorSceneManager.OpenScene(scenePath);
+                        OpenSceneCheck(scenePath);
                         break;
 
                     //打开(不保存)
                     case 2:
-                        EditorSceneManager.OpenScene(scenePath);
+                        OpenSceneCheck(scenePath);
                         break;
 
                     //取消
@@ -372,7 +385,7 @@ namespace QuickOpenScene
             }
             else
             {
-                EditorSceneManager.OpenScene(scenePath);
+                OpenSceneCheck(scenePath);
             }
         }
 
