@@ -1,9 +1,8 @@
 using UnityEditor;
-using UnityEngine;
 
 namespace QuickOpenScene
 {
-    public class RefreshQOSWindow : MonoBehaviour
+    public class RefreshQOSWindow
     {
         [MenuItem(Config.MenuPath.refreshQOSWindow)]
         static void RefreshQOSWindowInit()
