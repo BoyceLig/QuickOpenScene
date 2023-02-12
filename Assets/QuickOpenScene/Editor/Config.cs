@@ -38,6 +38,7 @@ namespace QuickOpenScene
         {
             public const string quickOpenSceneWindow = "Tools/Quick Open Scene/快速打开场景 %&X";
             public const string aboutWindow = "Tools/Quick Open Scene/关于";
+            public const string refreshQOSWindow = "Tools/Quick Open Scene/刷新主界面";
             public const string addCurrScene = "Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到当前分组";
             public const string addAllScene = "Assets/Tools/Quick Open Scene/添加所有场景到当前分组";
         }

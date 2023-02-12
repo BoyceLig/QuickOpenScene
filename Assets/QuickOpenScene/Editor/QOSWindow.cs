@@ -14,7 +14,7 @@ namespace QuickOpenScene
         ReorderableList sceneButtons;
         Vector2 scrollViewPos;
         GUIStyle versionStyle, buttonStyle, rightLableStyle;
-        string searchText = string.Empty;
+        static string searchText = string.Empty;
 
         [MenuItem(Config.MenuPath.quickOpenSceneWindow)]
         static void Open()
@@ -318,7 +318,7 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfo">当前的数据</param>
         /// <returns>结果</returns>
 
-        bool CheckSearchResults(SceneConfigInfo sceneConfigInfo)
+        static bool CheckSearchResults(SceneConfigInfo sceneConfigInfo)
         {
             string[] allSearchText;
             if (searchText.Contains(" "))
@@ -343,7 +343,7 @@ namespace QuickOpenScene
         /// 打开场景
         /// </summary>
         /// <param name="scenePath">场景路径</param>
-        void OpenScene(string scenePath)
+        static void OpenScene(string scenePath)
         {
             void SceneIsPlayingCheck(string path)
             {
@@ -390,7 +390,7 @@ namespace QuickOpenScene
         /// 场景排序
         /// </summary>
         /// <returns>排序后结果</returns>
-        SceneConfigInfo[] SceneConfigInfosSort()
+        static SceneConfigInfo[] SceneConfigInfosSort()
         {
             SceneConfigInfo[] tempSceneConfigInfos;
             if (Config.GroupIndexPanel == 0)
