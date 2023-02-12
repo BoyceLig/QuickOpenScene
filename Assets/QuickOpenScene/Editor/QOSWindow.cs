@@ -386,13 +386,14 @@ namespace QuickOpenScene
             }
         }
 
+        static SceneConfigInfo[] tempSceneConfigInfos;
+
         /// <summary>
         /// 场景排序
         /// </summary>
         /// <returns>排序后结果</returns>
         static SceneConfigInfo[] SceneConfigInfosSort()
         {
-            SceneConfigInfo[] tempSceneConfigInfos;
             if (Config.GroupIndexPanel == 0)
             {
                 int sceneCount = 0;
@@ -403,20 +404,26 @@ namespace QuickOpenScene
                         sceneCount++;
                     }
                 }
-                tempSceneConfigInfos = new SceneConfigInfo[sceneCount];
-                int currIndex = 0;
-                for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
+                if (tempSceneConfigInfos == null || tempSceneConfigInfos.Length != sceneCount)
                 {
-                    for (int j = 0; j < Config.SceneConfigData.groupConfigs[i].sceneInfos.Count; j++)
+                    tempSceneConfigInfos = new SceneConfigInfo[sceneCount];
+                    int currIndex = 0;
+                    for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
                     {
-                        tempSceneConfigInfos[currIndex] = Config.SceneConfigData.groupConfigs[i].sceneInfos[j];
-                        currIndex++;
+                        for (int j = 0; j < Config.SceneConfigData.groupConfigs[i].sceneInfos.Count; j++)
+                        {
+                            tempSceneConfigInfos[currIndex] = Config.SceneConfigData.groupConfigs[i].sceneInfos[j];
+                            currIndex++;
+                        }
                     }
                 }
             }
             else
             {
-                tempSceneConfigInfos = Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].sceneInfos.ToArray();
+                if (tempSceneConfigInfos != Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].sceneInfos.ToArray())
+                {
+                    tempSceneConfigInfos = Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].sceneInfos.ToArray();
+                }
             }
 
             switch (Config.SortbyIndex)
