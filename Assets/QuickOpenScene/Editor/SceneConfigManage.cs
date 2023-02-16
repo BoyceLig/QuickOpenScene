@@ -142,11 +142,18 @@ namespace QuickOpenScene
         /// 获取升级日志的日志信息
         /// </summary>
         /// <returns></returns>
-        public static string GetLogText()
+        public static void GetLogText()
         {
-            string path = Config.PluginPath + "/ChangeLog.txt";
-            TextAsset logText = AssetDatabase.LoadAssetAtPath<TextAsset>(path);
-            return logText.text;
+            if (Config.NeedUpdate && !Config.ChangeLogIsDown)
+            {
+                new GetVersionInformation().GetOnlineLog();
+            }
+            else
+            {
+                string path = Config.PluginPath + "/ChangeLog.txt";
+                Config.LogText = AssetDatabase.LoadAssetAtPath<TextAsset>(path).text;
+            }
+
         }
 
         /// <summary>

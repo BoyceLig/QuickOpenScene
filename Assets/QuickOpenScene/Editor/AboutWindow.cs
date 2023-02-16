@@ -7,7 +7,6 @@ namespace QuickOpenScene
     {
         GUIStyle titleStyle, linkStyle, nameStyle, logTextStyle;
         Vector2 logscrollPosition;
-        string logText;
         string[] autoOpenAboutString = new string[] { "有更新时自动弹出", "永不弹出" };
 
         [MenuItem(Config.MenuPath.aboutWindow, priority = 2001)]
@@ -20,10 +19,12 @@ namespace QuickOpenScene
             window.maxSize = defaultSize;
             window.Show();
         }
+
         private void OnEnable()
         {
-            logText = SceneConfigManage.GetLogText();
+            SceneConfigManage.GetLogText();
         }
+
         public void OnGUI()
         {
             if (titleStyle == null)
@@ -66,7 +67,7 @@ namespace QuickOpenScene
             //升级日志部分
             GUILayout.Label("升级日志：", EditorStyles.boldLabel);
             logscrollPosition = GUILayout.BeginScrollView(logscrollPosition, "ProgressBarBack", GUILayout.ExpandHeight(true), GUILayout.ExpandWidth(true));
-            GUILayout.Label(logText, logTextStyle);
+            GUILayout.Label(Config.LogText, logTextStyle);
             GUILayout.EndScrollView();
             EditorGUILayout.Separator();
 
@@ -138,7 +139,7 @@ namespace QuickOpenScene
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
             GUILayout.Label("关于界面：", EditorStyles.boldLabel);
-            Config.AutoOpenAbout = EditorGUILayout.Popup(Config.AutoOpenAbout, autoOpenAboutString, GUILayout.ExpandWidth(false),GUILayout.Width(120));
+            Config.AutoOpenAbout = EditorGUILayout.Popup(Config.AutoOpenAbout, autoOpenAboutString, GUILayout.ExpandWidth(false), GUILayout.Width(120));
             EditorGUILayout.EndHorizontal();
             Repaint();
         }

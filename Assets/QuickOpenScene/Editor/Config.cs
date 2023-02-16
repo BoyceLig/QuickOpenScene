@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.Windows;
 
 namespace QuickOpenScene
@@ -25,13 +26,6 @@ namespace QuickOpenScene
     {
         //当前版本
         public const string currVersion = "1.9.0";
-        static bool isDown, needUpdata;
-        static string pluginPath, latestVersion, latestDownloadURL;
-        static int autoOpenAbout;
-        //场景配置文件数据
-        static SceneConfig sceneConfig;
-
-        static string[] groupStr;
 
         //菜单路径
         public struct MenuPath
@@ -50,9 +44,11 @@ namespace QuickOpenScene
             public const string githubIssues = "https://github.com/BoyceLig/QuickOpenScene/issues";
             public const string githubReleases = "https://github.com/BoyceLig/QuickOpenScene/releases";
             public const string githubLatestAPI = "https://api.github.com/repos/BoyceLig/QuickOpenScene/releases/latest";
+            public const string githubChangeLog = "https://raw.githubusercontent.com/BoyceLig/QuickOpenScene/main/Assets/QuickOpenScene/ChangeLog.txt";
             public const string qqGroup = "https://jq.qq.com/?_wv=1027&k=7ap29Woh";
         }
 
+        static string pluginPath;
         /// <summary>
         /// 获取插件的路径
         /// </summary>
@@ -60,6 +56,7 @@ namespace QuickOpenScene
         {
             get
             {
+                //PluginPath有数据，但是挪位置了，从新查找位置
                 if (!Directory.Exists(GetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath())))
                 {
                     SetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath());
@@ -68,6 +65,8 @@ namespace QuickOpenScene
             }
         }
 
+        //场景配置文件数据
+        static SceneConfig sceneConfig;
         /// <summary>
         /// 获取SceneConfig配置文件
         /// </summary>
@@ -91,6 +90,7 @@ namespace QuickOpenScene
             }
         }
 
+        static string latestVersion;
         /// <summary>
         /// 最新版本
         /// </summary>
@@ -98,7 +98,10 @@ namespace QuickOpenScene
         {
             get
             {
-                latestVersion = SessionState.GetString("QuickOpenSceneLatestVersion", currVersion);
+                if (latestVersion == null || latestVersion == string.Empty)
+                {
+                    latestVersion = SessionState.GetString("QuickOpenSceneLatestVersion", currVersion);
+                }
                 return latestVersion;
             }
             set
@@ -111,6 +114,7 @@ namespace QuickOpenScene
             }
         }
 
+        static string latestDownloadURL;
         /// <summary>
         /// 最新版本下载地址
         /// </summary>
@@ -120,14 +124,7 @@ namespace QuickOpenScene
             {
                 if (latestDownloadURL == null)
                 {
-                    latestDownloadURL = URL.githubReleases;
-                }
-                else
-                {
-                    if (latestDownloadURL != SessionState.GetString("QuickOpenSceneLatestDownloadURL", URL.githubReleases))
-                    {
-                        latestDownloadURL = SessionState.GetString("QuickOpenSceneLatestDownloadURL", URL.githubReleases);
-                    }
+                    latestDownloadURL = SessionState.GetString("QuickOpenSceneLatestDownloadURL", URL.githubReleases);
                 }
                 return latestDownloadURL;
             }
@@ -142,24 +139,44 @@ namespace QuickOpenScene
             }
         }
 
+        static bool versionIsDown;
         /// <summary>
         /// 是否下载完成
         /// </summary>
-        public static bool IsDown
+        public static bool VersionIsDown
         {
             get
             {
-                isDown = SessionState.GetBool("QuickOpenSceneIsDown", false);
-                return isDown;
+                versionIsDown = SessionState.GetBool("VersionIsDown", false);
+                return versionIsDown;
             }
             set
             {
-                SessionState.SetBool("QuickOpenSceneIsDown", value);
-                isDown = value;
+                SessionState.SetBool("VersionIsDown", value);
+                versionIsDown = value;
+            }
+        }
+
+        static bool changeLogIsDown;
+        public static bool ChangeLogIsDown
+        {
+            get
+            {
+                changeLogIsDown = SessionState.GetBool("ChangeLogIsDown", false);
+                return changeLogIsDown;
+            }
+            set
+            {
+                if (changeLogIsDown != value)
+                {
+                    SessionState.SetBool("ChangeLogIsDown", value);
+                    changeLogIsDown = value;
+                }
             }
         }
 
         static Version currVersionV, latestVersionV;
+        static bool needUpdata;
         /// <summary>
         /// 是否需要更新
         /// </summary>
@@ -185,14 +202,32 @@ namespace QuickOpenScene
         }
 
         static int sortbyIndex;
+
         /// <summary>
         /// 排序选项
         /// </summary>
         public static int SortbyIndex
         {
-            get => SessionState.GetInt("SortbyIndex", 0);
-            set => SessionState.SetInt("SortbyIndex", value);
+            get
+            {
+                if (sortbyIndex == 0)
+                {
+                    sortbyIndex = SessionState.GetInt("SortbyIndex", 0);
+                }
+                return sortbyIndex;
+            }
+
+            set
+            {
+                if (sortbyIndex == value)
+                {
+                    SessionState.SetInt("SortbyIndex", value);
+                    sortbyIndex = value;
+                }
+            }
         }
+
+        static int groupIndexPanel;
 
         /// <summary>
         /// 当前分组的面板序号
@@ -201,18 +236,24 @@ namespace QuickOpenScene
         {
             get
             {
-                int temp = SessionState.GetInt("GroupIndexPanel", 0);
-                if (temp > SceneConfigData.groupConfigs.Count)
+                if (groupIndexPanel == 0)
                 {
-                    temp = SceneConfigData.groupConfigs.Count;
+                    groupIndexPanel = SessionState.GetInt("GroupIndexPanel", 0);
                 }
-                return temp;
+
+                if (groupIndexPanel > SceneConfigData.groupConfigs.Count)
+                {
+                    groupIndexPanel = SceneConfigData.groupConfigs.Count;
+                }
+
+                return groupIndexPanel;
             }
             set
             {
-                if (value != SessionState.GetInt("GroupIndexPanel", 0))
+                if (value != groupIndexPanel)
                 {
                     SessionState.SetInt("GroupIndexPanel", value);
+                    groupIndexPanel = value;
                     EditorWindow.GetWindow<QOSWindow>().SendEvent(EditorGUIUtility.CommandEvent("GroupIndexPanelChange"));
                 }
             }
@@ -226,6 +267,7 @@ namespace QuickOpenScene
             get => GroupIndexPanel > 0 ? GroupIndexPanel - 1 : 0;
         }
 
+        static int autoOpenAbout;
         /// <summary>
         /// 需要更新时是否自动打开关于面板
         /// </summary>
@@ -235,18 +277,31 @@ namespace QuickOpenScene
             set => SetValue(ref autoOpenAbout, "AutoOpenAbout", value);
         }
 
+        static DateTime updateTime;
         public static DateTime UpdateTime
         {
             get
             {
-                return DateTime.Parse(SessionState.GetString("UpdateTime", new DateTime(1971, 1, 1).ToString()));
+                if (updateTime == null)
+                {
+                    updateTime = DateTime.Parse(SessionState.GetString("UpdateTime", new DateTime(1971, 1, 1).ToString()));
+                }
+                return updateTime;
             }
             set
             {
-                SessionState.SetString("UpdateTime", value.ToString());
+                if (updateTime != value)
+                {
+                    updateTime = value;
+                    SessionState.SetString("UpdateTime", value.ToString());
+                }
             }
         }
 
+        static string[] groupStr;
+        /// <summary>
+        /// 面板分组
+        /// </summary>
         public static string[] GroupStr
         {
             get
@@ -262,9 +317,35 @@ namespace QuickOpenScene
                 }
                 return groupStr;
             }
-            set { groupStr = value; }
+            set
+            {
+                if (groupStr != value)
+                {
+                    groupStr = value;
+                }
+            }
         }
 
+        static string logText;
+        public static string LogText
+        {
+            get
+            {
+                if (logText == null || logText == string.Empty)
+                {
+                    logText = SessionState.GetString("QOSLogText", AssetDatabase.LoadAssetAtPath<TextAsset>(PluginPath + "/ChangeLog.txt").text);
+                }
+                return logText;
+            }
+            set
+            {
+                if (logText != value)
+                {
+                    SessionState.SetString("QOSLogText", value);
+                    logText = value;
+                }
+            }
+        }
 
 
         /// <summary>

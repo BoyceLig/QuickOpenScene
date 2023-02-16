@@ -20,7 +20,7 @@ namespace QuickOpenScene
                     {
                         LatestVersion = temp.tag_name;
                         LatestDownloadURL = temp.assets[0].browser_download_url;
-                        IsDown = true;
+                        VersionIsDown = true;
                         UpdateTime = DateTime.Now;
                         if (displayUpdateMessage)
                         {
@@ -29,6 +29,15 @@ namespace QuickOpenScene
                         }
                     }
                 }
+            }));
+        }
+
+        public void GetOnlineLog()
+        {
+            StartBackgroundTask(StartRequest(URL.githubChangeLog, () =>
+            {
+                ChangeLogIsDown =true;
+                LogText = request.downloadHandler.text;
             }));
         }
 
