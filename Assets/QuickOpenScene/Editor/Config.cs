@@ -194,7 +194,9 @@ namespace QuickOpenScene
             set => SessionState.SetInt("SortbyIndex", value);
         }
 
-
+        /// <summary>
+        /// 当前分组的面板序号
+        /// </summary>
         public static int GroupIndexPanel
         {
             get
@@ -214,6 +216,14 @@ namespace QuickOpenScene
                     EditorWindow.GetWindow<QOSWindow>().SendEvent(EditorGUIUtility.CommandEvent("GroupIndexPanelChange"));
                 }
             }
+        }
+
+        /// <summary>
+        /// 当前面板分组所对应的数据分组index数
+        /// </summary>
+        public static int CurrGroupIndex
+        {
+            get => GroupIndexPanel > 0 ? GroupIndexPanel - 1 : 0;
         }
 
         /// <summary>

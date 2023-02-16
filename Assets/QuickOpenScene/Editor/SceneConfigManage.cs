@@ -10,6 +10,7 @@ namespace QuickOpenScene
         [MenuItem(Config.MenuPath.addCurrScene)]
         static void AddCurrSceneConfig()
         {
+            CheckSceneConfig();
             //已选择的guids
             string[] guids = Selection.assetGUIDs;
             List<string> direPaths = new List<string>();
@@ -24,7 +25,7 @@ namespace QuickOpenScene
                 {
                     if (Path.GetExtension(path).Contains(".unity"))
                     {
-                        AddScene(Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0, path, SceneConfigInfoType.scenePath);
+                        AddScene(Config.CurrGroupIndex, path, SceneConfigInfoType.scenePath);
                     }
                 }
             }
@@ -34,17 +35,18 @@ namespace QuickOpenScene
 
             foreach (var sceneGuid in sceneGuids)
             {
-                AddScene(Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0, sceneGuid, SceneConfigInfoType.sceneGUID);
+                AddScene(Config.CurrGroupIndex, sceneGuid, SceneConfigInfoType.sceneGUID);
             }
         }
 
         [MenuItem(Config.MenuPath.addAllScene)]
         static void AddAllSceneConfig()
         {
+            CheckSceneConfig();
             string[] guids = AssetDatabase.FindAssets("t:Scene");
             foreach (var guid in guids)
             {
-                AddScene(Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0, guid, SceneConfigInfoType.sceneGUID);
+                AddScene(Config.CurrGroupIndex, guid, SceneConfigInfoType.sceneGUID);
             }
         }
 
@@ -56,6 +58,10 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfoType">info 的类型</param>
         public static void AddScene(int groupIndex, string info, SceneConfigInfoType sceneConfigInfoType)
         {
+            if (Config.SceneConfigData.groupConfigs.Count <= groupIndex)
+            {
+                return;
+            }
             string path;
             if (sceneConfigInfoType == SceneConfigInfoType.sceneGUID)
             {
@@ -67,28 +73,37 @@ namespace QuickOpenScene
             }
             if (File.Exists(path) && Path.GetExtension(path).Contains(".unity") && path.StartsWith("Assets"))
             {
-                //查重
-                bool exist = false;
-                CheckSceneConfig();
-                if (Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Count > 0)
+                SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
+                AddScene(groupIndex, temp);
+            }
+        }
+
+        /// <summary>
+        /// 添加场景到配置文件
+        /// </summary>
+        /// <param name="groupIndex">分组数(不是面板的分组数)</param>
+        /// <param name="sceneConfigInfo">场景数据</param>
+        public static void AddScene(int groupIndex, SceneConfigInfo sceneConfigInfo)
+        {
+            if (Config.SceneConfigData.groupConfigs.Count <= groupIndex)
+            {
+                return;
+            }
+
+            if (Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Count > 0)
+            {
+                foreach (var item in Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos)
                 {
-                    foreach (var item in Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos)
+                    if (item.SceneGUID == sceneConfigInfo.SceneGUID)
                     {
-                        if (item.ScenePath == path)
-                        {
-                            exist = true;
-                            break;
-                        }
+                        return;
                     }
                 }
-                if (!exist)
-                {
-                    SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
-                    Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0].sceneInfos.Add(temp);
-                    EditorUtility.SetDirty(Config.SceneConfigData);
-                    Debug.Log("添加 " + temp.SceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0].groupName + " 成功！", temp.Scene);
-                }
             }
+
+            Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
+            EditorUtility.SetDirty(Config.SceneConfigData);
+            Debug.Log("添加 " + sceneConfigInfo.SceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", sceneConfigInfo.Scene);
         }
 
         /// <summary>

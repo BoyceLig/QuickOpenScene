@@ -31,7 +31,7 @@ namespace QuickOpenScene
             {
                 sceneButtons = Config.GroupIndexPanel == 0 ?
                 new ReorderableList(SceneConfigInfosSort(), typeof(SceneConfigInfo)) :
-                new ReorderableList(Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].sceneInfos, typeof(SceneConfigInfo));
+                new ReorderableList(Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos, typeof(SceneConfigInfo));
                 sceneButtons.displayAdd = false;
                 sceneButtons.displayRemove = false;
                 sceneButtons.drawHeaderCallback = DrawHeaderCallback;
@@ -68,7 +68,6 @@ namespace QuickOpenScene
             //场景按钮
             if (Config.SceneConfigData.groupConfigs != null && Config.SceneConfigData.groupConfigs.Count > 0)
             {
-
                 EditorGUILayout.BeginHorizontal();
                 //判断当前是否有数据
                 if (SceneConfigInfosSort()[index].SceneGUID != string.Empty)
@@ -122,7 +121,7 @@ namespace QuickOpenScene
                                     {
                                         if (Config.GroupIndexPanel > 0)
                                         {
-                                            SceneConfigManage.RemoveSceneInfo(Config.GroupIndexPanel - 1, SceneConfigInfosSort()[currIndex]);
+                                            SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, SceneConfigInfosSort()[currIndex]);
                                         }
                                         else
                                         {
@@ -137,7 +136,7 @@ namespace QuickOpenScene
                                 {
                                     if (Config.GroupIndexPanel > 0)
                                     {
-                                        SceneConfigManage.RemoveSceneInfo(Config.GroupIndexPanel - 1, SceneConfigInfosSort()[currIndex]);
+                                        SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, SceneConfigInfosSort()[currIndex]);
                                     }
                                     else
                                     {
@@ -148,6 +147,20 @@ namespace QuickOpenScene
                                     }
                                 }
                             });
+                            if (Config.GroupIndexPanel > 0)
+                            {
+                                for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
+                                {
+                                    int currGroupIndex = i;
+                                    if (Config.SceneConfigData.groupConfigs[i].groupName != Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].groupName)
+                                    {
+                                        menu.AddItem(new GUIContent($"复制场景到/{Config.SceneConfigData.groupConfigs[i].groupName} 分组"), false, () =>
+                                        {
+                                            SceneConfigManage.AddScene(currGroupIndex, Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos[currIndex]);
+                                        });
+                                    }
+                                }
+                            }
                             menu.ShowAsContext();
                         }
                     }
@@ -164,7 +177,7 @@ namespace QuickOpenScene
                         }
                         else
                         {
-                            SceneConfigManage.RemoveSceneInfo(Config.GroupIndexPanel - 1, SceneConfigInfosSort()[index]);
+                            SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, SceneConfigInfosSort()[index]);
                         }
                     }
                     EditorGUI.EndDisabledGroup();
@@ -291,7 +304,7 @@ namespace QuickOpenScene
                 {
                     foreach (var path in DragAndDrop.paths)
                     {
-                        SceneConfigManage.AddScene(Config.GroupIndexPanel > 0 ? Config.GroupIndexPanel - 1 : 0, path, SceneConfigInfoType.scenePath);
+                        SceneConfigManage.AddScene(Config.CurrGroupIndex, path, SceneConfigInfoType.scenePath);
                     }
                 }
             }
@@ -420,9 +433,9 @@ namespace QuickOpenScene
             }
             else
             {
-                if (tempSceneConfigInfos != Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].sceneInfos.ToArray())
+                if (tempSceneConfigInfos != Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos.ToArray())
                 {
-                    tempSceneConfigInfos = Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].sceneInfos.ToArray();
+                    tempSceneConfigInfos = Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos.ToArray();
                 }
             }
 
