@@ -61,7 +61,7 @@ namespace QuickOpenScene
                 {
                     SetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath());
                 }
-                return GetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath());
+                return pluginPath;
             }
         }
 
@@ -98,7 +98,7 @@ namespace QuickOpenScene
         {
             get
             {
-                if (latestVersion == null || latestVersion == string.Empty)
+                if (latestVersion == null)
                 {
                     latestVersion = SessionState.GetString("QuickOpenSceneLatestVersion", currVersion);
                 }
@@ -202,7 +202,6 @@ namespace QuickOpenScene
         }
 
         static int sortbyIndex;
-
         /// <summary>
         /// 排序选项
         /// </summary>
@@ -219,7 +218,7 @@ namespace QuickOpenScene
 
             set
             {
-                if (sortbyIndex == value)
+                if (sortbyIndex != value)
                 {
                     SessionState.SetInt("SortbyIndex", value);
                     sortbyIndex = value;
@@ -228,7 +227,6 @@ namespace QuickOpenScene
         }
 
         static int groupIndexPanel;
-
         /// <summary>
         /// 当前分组的面板序号
         /// </summary>
@@ -240,12 +238,10 @@ namespace QuickOpenScene
                 {
                     groupIndexPanel = SessionState.GetInt("GroupIndexPanel", 0);
                 }
-
-                if (groupIndexPanel > SceneConfigData.groupConfigs.Count)
+                else if (groupIndexPanel > SceneConfigData.groupConfigs.Count)
                 {
                     groupIndexPanel = SceneConfigData.groupConfigs.Count;
                 }
-
                 return groupIndexPanel;
             }
             set
@@ -331,7 +327,7 @@ namespace QuickOpenScene
         {
             get
             {
-                if (logText == null || logText == string.Empty)
+                if (logText == null)
                 {
                     logText = SessionState.GetString("QOSLogText", AssetDatabase.LoadAssetAtPath<TextAsset>(PluginPath + "/ChangeLog.txt").text);
                 }
@@ -360,23 +356,18 @@ namespace QuickOpenScene
         {
             if (t == null)
             {
-                if (EditorUserSettings.GetConfigValue(name) == null || EditorUserSettings.GetConfigValue(name) == string.Empty)
+                string temp = EditorUserSettings.GetConfigValue(name);
+                if (temp == null)
                 {
-                    EditorUserSettings.SetConfigValue(name, defaultValue.ToString());
-                    t = defaultValue;
-                    return t;
+                    SetValue(ref t, name, defaultValue);
                 }
                 else
                 {
                     TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
-                    t = (T)converter.ConvertFrom(EditorUserSettings.GetConfigValue(name));
-                    return t;
+                    t = (T)converter.ConvertFrom(temp);
                 }
             }
-            else
-            {
-                return t;
-            }
+            return t;
         }
 
         /// <summary>
@@ -389,8 +380,12 @@ namespace QuickOpenScene
         /// <returns>最终的数值</returns>
         static void SetValue<T>(ref T t, string name, T value)
         {
-            EditorUserSettings.SetConfigValue(name, value.ToString());
-            t = value;
+            if (!t.Equals(value))
+            {
+                EditorUserSettings.SetConfigValue(name, value.ToString());
+                t = value;
+            }
+
         }
     }
 }
