@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
+using System.Text;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEditor;
 using UnityEngine;
 
@@ -183,14 +186,29 @@ namespace QuickOpenScene
         /// <returns>SceneConfig</returns>
         public static SceneConfig CreateSceneConfig()
         {
-            string dataFolderPath = Config.PluginPath + "/Data";
-            string sceneConfigPath = dataFolderPath + "/QuickOpenSceneConfigData.asset";
-            if (!Directory.Exists(dataFolderPath))
-            {
-                AssetDatabase.CreateFolder(Config.PluginPath, "Data");
-            }
+
             SceneConfig sceneConfig = CreateInstance<SceneConfig>();
-            AssetDatabase.CreateAsset(sceneConfig, sceneConfigPath);
+
+            SaveJson(Config.sceneConfigDatePath, sceneConfig);
+
+            return sceneConfig;
+        }
+
+        static void SaveJson(string sceneConfigFullPath, SceneConfig sceneConfig)
+        {
+            string jsonString = JsonUtility.ToJson(sceneConfig);
+            byte[] databyte = Encoding.UTF8.GetBytes(jsonString);
+            FileStream jsonFileStream = File.Open(sceneConfigFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+
+            jsonFileStream.Write(databyte, 0, databyte.Length);
+            jsonFileStream.Flush();
+            jsonFileStream.Close();
+        }
+
+        public static SceneConfig ReadSceneConfig()
+        {
+            string jsonString = File.ReadAllText(Config.sceneConfigDatePath);
+            SceneConfig sceneConfig = JsonUtility.FromJson<SceneConfig>(jsonString);
             return sceneConfig;
         }
 

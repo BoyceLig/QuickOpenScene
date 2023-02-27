@@ -27,6 +27,8 @@ namespace QuickOpenScene
         //当前版本
         public const string currVersion = "1.9.0";
 
+        public const string sceneConfigDatePath = "UserSettings/QuickOpenSceneConfigData.json";
+
         //菜单路径
         public struct MenuPath
         {
@@ -76,10 +78,9 @@ namespace QuickOpenScene
             {
                 if (sceneConfig == null)
                 {
-                    string path = PluginPath + "/Data/QuickOpenSceneConfigData.asset";
-                    if (File.Exists(path))
+                    if (File.Exists(sceneConfigDatePath))
                     {
-                        sceneConfig = AssetDatabase.LoadAssetAtPath<SceneConfig>(path);
+                        sceneConfig = SceneConfigManage.ReadSceneConfig();
                     }
                     else
                     {
