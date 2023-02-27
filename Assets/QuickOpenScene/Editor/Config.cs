@@ -380,7 +380,7 @@ namespace QuickOpenScene
         /// <returns>最终的数值</returns>
         static void SetValue<T>(ref T t, string name, T value)
         {
-            if (!t.Equals(value))
+            if (t == null || !t.Equals(value))
             {
                 EditorUserSettings.SetConfigValue(name, value.ToString());
                 t = value;
