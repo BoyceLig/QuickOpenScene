@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,26 +9,6 @@ namespace QuickOpenScene
     public class SceneConfig : ScriptableObject
     {
         public List<GroupConfigInfo> groupConfigs = new List<GroupConfigInfo>();
-
-        void OnValidate()
-        {
-            for (int i = 0; i < groupConfigs.Count - 1; i++)
-            {
-                if (groupConfigs.Last().groupName == groupConfigs[i].groupName)
-                {
-                    groupConfigs.Last().groupName += 1;
-                }
-            }
-
-            foreach (var group in groupConfigs)
-            {
-                foreach (var scene in group.sceneInfos)
-                {
-                    scene.Refresh();
-                }
-            }
-            EditorUtility.SetDirty(Config.SceneConfigData);
-        }
     }
     [Serializable]
     public class GroupConfigInfo : IComparable<GroupConfigInfo>
@@ -82,7 +61,7 @@ namespace QuickOpenScene
         }
 
         public void Refresh()
-        {
+        {            
             if (scene != null)
             {
                 scenePath = AssetDatabase.GetAssetPath(scene);

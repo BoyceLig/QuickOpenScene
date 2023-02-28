@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Text;
-using Unity.IO.LowLevel.Unsafe;
 using UnityEditor;
 using UnityEngine;
 
@@ -105,7 +103,7 @@ namespace QuickOpenScene
             }
 
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
-            EditorUtility.SetDirty(Config.SceneConfigData);
+            SaveSceneConfigData();
             Debug.Log("添加 " + sceneConfigInfo.SceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", sceneConfigInfo.Scene);
         }
 
@@ -118,7 +116,7 @@ namespace QuickOpenScene
         {
             Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
-            EditorUtility.SetDirty(Config.SceneConfigData);
+            SaveSceneConfigData();
         }
 
         /// <summary>
@@ -135,7 +133,7 @@ namespace QuickOpenScene
                     {
                         Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.SceneName + " 场景成功！");
                         Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
-                        EditorUtility.SetDirty(Config.SceneConfigData);
+                        SaveSceneConfigData();
                     }
                 }
             }
@@ -208,7 +206,8 @@ namespace QuickOpenScene
         public static SceneConfig ReadSceneConfig()
         {
             string jsonString = File.ReadAllText(Config.sceneConfigDatePath);
-            SceneConfig sceneConfig = JsonUtility.FromJson<SceneConfig>(jsonString);
+            SceneConfig sceneConfig = CreateInstance<SceneConfig>();
+            JsonUtility.FromJsonOverwrite(jsonString, sceneConfig);
             return sceneConfig;
         }
 
@@ -228,7 +227,7 @@ namespace QuickOpenScene
         /// </summary>
         public static void SaveSceneConfigData()
         {
-            AssetDatabase.SaveAssetIfDirty(Config.SceneConfigData);
+            SaveJson(Config.sceneConfigDatePath, Config.SceneConfigData);
         }
 
     }

@@ -344,7 +344,6 @@ namespace QuickOpenScene
             }
         }
 
-
         /// <summary>
         /// 属性中的获取数据，如果为空则创建一个默认的并储存到 EditorUserSettings
         /// </summary>

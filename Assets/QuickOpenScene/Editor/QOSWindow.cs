@@ -32,6 +32,7 @@ namespace QuickOpenScene
                 sceneButtons = Config.GroupIndexPanel == 0 ?
                 new ReorderableList(SceneConfigInfosSort(), typeof(SceneConfigInfo)) :
                 new ReorderableList(Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos, typeof(SceneConfigInfo));
+
                 sceneButtons.displayAdd = false;
                 sceneButtons.displayRemove = false;
                 sceneButtons.drawHeaderCallback = DrawHeaderCallback;
@@ -81,6 +82,10 @@ namespace QuickOpenScene
                         //左键点击打开场景
                         if (Event.current.button == 0)
                         {
+                            if (SceneConfigInfosSort()[index].Scene == null)
+                            {
+                                SceneConfigInfosSort()[index].Refresh();
+                            }
                             //判断场景是否丢失
                             if (SceneConfigInfosSort()[index].Scene != null)
                             {
@@ -88,9 +93,17 @@ namespace QuickOpenScene
                             }
                             else
                             {
-                                if (EditorUtility.DisplayDialog("场景丢失", $"场景{SceneConfigInfosSort()[index].SceneName}已丢失，是否删除？", "删除数据", "取消"))
+                                SceneConfigInfosSort()[index].Refresh();
+                                if (SceneConfigInfosSort()[index].Scene != null)
                                 {
-                                    SceneConfigManage.RemoveSceneInfo(SceneConfigInfosSort()[index]);
+                                    OpenScene(SceneConfigInfosSort()[index].ScenePath);
+                                }
+                                else
+                                {
+                                    if (EditorUtility.DisplayDialog("场景丢失", $"场景{SceneConfigInfosSort()[index].SceneName}已丢失，是否删除？", "删除数据", "取消"))
+                                    {
+                                        SceneConfigManage.RemoveSceneInfo(SceneConfigInfosSort()[index]);
+                                    }
                                 }
                             }
                         }
@@ -211,12 +224,12 @@ namespace QuickOpenScene
             }
 
             //配置文件快速跳转
-            EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("配置文件：", GUILayout.ExpandWidth(false));
-            EditorGUILayout.ObjectField(Config.SceneConfigData, typeof(SceneConfig), false);
-            EditorGUILayout.EndHorizontal();
-            EditorGUI.EndDisabledGroup();
+            //EditorGUI.BeginDisabledGroup(true);
+            //EditorGUILayout.BeginHorizontal();
+            //GUILayout.Label("配置文件：", GUILayout.ExpandWidth(false));
+            //EditorGUILayout.ObjectField(Config.SceneConfigData, typeof(SceneConfig), false);
+            //EditorGUILayout.EndHorizontal();
+            //EditorGUI.EndDisabledGroup();
 
 
             //名称检索
@@ -278,7 +291,7 @@ namespace QuickOpenScene
             {
                 Config.GroupIndexPanel -= 1;
                 Config.SceneConfigData.groupConfigs.RemoveAt(Config.GroupIndexPanel);
-                EditorUtility.SetDirty(Config.SceneConfigData);
+                SceneConfigManage.SaveSceneConfigData();
             }
             EditorGUI.EndDisabledGroup();
             EditorGUI.EndDisabledGroup();
