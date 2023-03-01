@@ -103,7 +103,7 @@ namespace QuickOpenScene
             }
 
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
-            SaveSceneConfigData();
+            SaveSceneConfigJS();
             Debug.Log("添加 " + sceneConfigInfo.SceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", sceneConfigInfo.Scene);
         }
 
@@ -116,7 +116,7 @@ namespace QuickOpenScene
         {
             Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
-            SaveSceneConfigData();
+            SaveSceneConfigJS();
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace QuickOpenScene
                     {
                         Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.SceneName + " 场景成功！");
                         Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
-                        SaveSceneConfigData();
+                        SaveSceneConfigJS();
                     }
                 }
             }
@@ -194,16 +194,16 @@ namespace QuickOpenScene
 
         static void SaveJson(string sceneConfigFullPath, SceneConfig sceneConfig)
         {
-            string jsonString = JsonUtility.ToJson(sceneConfig);
+            string jsonString = JsonUtility.ToJson(sceneConfig, true);
             byte[] databyte = Encoding.UTF8.GetBytes(jsonString);
-            FileStream jsonFileStream = File.Open(sceneConfigFullPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            FileStream jsonFileStream = File.Open(sceneConfigFullPath, FileMode.Create, FileAccess.ReadWrite);
 
             jsonFileStream.Write(databyte, 0, databyte.Length);
             jsonFileStream.Flush();
             jsonFileStream.Close();
         }
 
-        public static SceneConfig ReadSceneConfig()
+        public static SceneConfig ReadSceneConfigJS()
         {
             string jsonString = File.ReadAllText(Config.sceneConfigDatePath);
             SceneConfig sceneConfig = CreateInstance<SceneConfig>();
@@ -225,7 +225,7 @@ namespace QuickOpenScene
         /// <summary>
         /// 保存数据
         /// </summary>
-        public static void SaveSceneConfigData()
+        public static void SaveSceneConfigJS()
         {
             SaveJson(Config.sceneConfigDatePath, Config.SceneConfigData);
         }

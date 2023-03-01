@@ -39,7 +39,7 @@ namespace QuickOpenScene
                     }
                 }
 
-            } while (nameRepeat);            
+            } while (nameRepeat);
         }
 
         public void OnGUI()
@@ -85,7 +85,7 @@ namespace QuickOpenScene
                     default:
                         break;
                 }
-                EditorUtility.SetDirty(Config.SceneConfigData);
+                SceneConfigManage.SaveSceneConfigJS();
                 Close();
             }
         }

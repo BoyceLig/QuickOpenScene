@@ -25,7 +25,7 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.9.0";
+        public const string currVersion = "1.9.1";
 
         public const string sceneConfigDatePath = "UserSettings/QuickOpenSceneConfigData.json";
 
@@ -80,7 +80,7 @@ namespace QuickOpenScene
                 {
                     if (File.Exists(sceneConfigDatePath))
                     {
-                        sceneConfig = SceneConfigManage.ReadSceneConfig();
+                        sceneConfig = SceneConfigManage.ReadSceneConfigJS();
                     }
                     else
                     {

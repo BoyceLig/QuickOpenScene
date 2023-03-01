@@ -41,7 +41,7 @@ namespace QuickOpenScene
         }
         void OnDestroy()
         {
-            SceneConfigManage.SaveSceneConfigData();
+            SceneConfigManage.SaveSceneConfigJS();
         }
 
         static void DrawHeaderCallback(Rect rect)
@@ -73,7 +73,7 @@ namespace QuickOpenScene
                 //判断当前是否有数据
                 if (SceneConfigInfosSort()[index].SceneGUID != string.Empty)
                 {
-                    //名称检索(搜索框为空或者搜索名称包含)                    
+                    //名称检索(搜索框为空或者搜索名称包含)
                     EditorGUI.BeginDisabledGroup(!CheckSearchResults(SceneConfigInfosSort()[index]));
                     if (GUI.Button(sceneRect, new GUIContent("  " + SceneConfigInfosSort()[index].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
                     {
@@ -217,19 +217,9 @@ namespace QuickOpenScene
                 versionStyle.active.textColor = Color.gray;
             }
 
-            if (true)
-            {
-                rightLableStyle = new GUIStyle(EditorStyles.label);
-                rightLableStyle.border.top = 3;
-            }
 
-            //配置文件快速跳转
-            //EditorGUI.BeginDisabledGroup(true);
-            //EditorGUILayout.BeginHorizontal();
-            //GUILayout.Label("配置文件：", GUILayout.ExpandWidth(false));
-            //EditorGUILayout.ObjectField(Config.SceneConfigData, typeof(SceneConfig), false);
-            //EditorGUILayout.EndHorizontal();
-            //EditorGUI.EndDisabledGroup();
+            rightLableStyle = new GUIStyle(EditorStyles.label);
+            rightLableStyle.border.top = 3;           
 
 
             //名称检索
@@ -291,7 +281,7 @@ namespace QuickOpenScene
             {
                 Config.GroupIndexPanel -= 1;
                 Config.SceneConfigData.groupConfigs.RemoveAt(Config.GroupIndexPanel);
-                SceneConfigManage.SaveSceneConfigData();
+                SceneConfigManage.SaveSceneConfigJS();
             }
             EditorGUI.EndDisabledGroup();
             EditorGUI.EndDisabledGroup();

@@ -34,6 +34,7 @@ namespace QuickOpenScene
     {
         [SerializeField]
         SceneAsset scene;
+        [SerializeField]
         string sceneName;
         [SerializeField]
         string scenePath;
