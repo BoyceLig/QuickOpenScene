@@ -202,12 +202,15 @@ namespace QuickOpenScene
                 GUILayout.Label("场景为空，请添加场景!");
             }
         }
-
+        void OnChangedCallback(ReorderableList list)
+        {
+            SceneConfigManage.SaveSceneConfigJS();
+        }
         void OnGUI()
         {
             ScenesPanelRefresh();
             sceneButtons.draggable = Config.SortbyIndex == 1 || Config.GroupIndexPanel == 0 ? false : true;
-
+            sceneButtons.onChangedCallback = OnChangedCallback;
             //GUIStyle初始化
             if (versionStyle == null)
             {
@@ -219,7 +222,7 @@ namespace QuickOpenScene
 
 
             rightLableStyle = new GUIStyle(EditorStyles.label);
-            rightLableStyle.border.top = 3;           
+            rightLableStyle.border.top = 3;
 
 
             //名称检索
@@ -326,7 +329,7 @@ namespace QuickOpenScene
             {
                 EditorGUILayout.LabelField($"Version: {Config.currVersion}（最新版）", EditorStyles.centeredGreyMiniLabel);
             }
-        }
+        }        
 
         /// <summary>
         /// 匹配搜索结果是否包含字符
