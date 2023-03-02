@@ -13,6 +13,17 @@ Unity 快速打开场景工具
 
 此工具为方便Unity工程内有很多场景并且在不同位置，更方便的场景集合切换工具。
 
+### 安装方法：
+#### 方法1：
+
+Package Manage添加git地址：https://github.com/BoyceLig/QuickOpenScene.git?path=Assets/QuickOpenScene
+
+#### 方法2：
+直接安装unitypackage
+
+### 方法3：
+下载整个工程，复制Assets文件夹内的QuickOpenScene到工程里
+
 ### 自定义添加场景:
 
 - 选定目录右键添加（`Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到配置文件`）
