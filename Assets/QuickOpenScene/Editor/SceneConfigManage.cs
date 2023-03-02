@@ -179,14 +179,14 @@ namespace QuickOpenScene
         }
 
         /// <summary>
-        /// 创建QuickOpenSceneConfigData文件
+        /// 创建QuickOpenSceneConfigJS文件
         /// </summary>
         /// <returns>SceneConfig</returns>
         public static SceneConfig CreateSceneConfig()
         {
 
             SceneConfig sceneConfig = CreateInstance<SceneConfig>();
-
+            sceneConfig.groupConfigs.Add(new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
             SaveJson(Config.sceneConfigDatePath, sceneConfig);
 
             return sceneConfig;
