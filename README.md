@@ -19,9 +19,11 @@ Unity 快速打开场景工具
 Package Manage添加git地址：https://github.com/BoyceLig/QuickOpenScene.git?path=Assets/QuickOpenScene
 
 #### 方法2：
+
 直接安装unitypackage
 
-### 方法3：
+#### 方法3：
+
 下载整个工程，复制Assets文件夹内的QuickOpenScene到工程里
 
 ### 自定义添加场景:
