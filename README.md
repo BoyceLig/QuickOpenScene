@@ -50,9 +50,7 @@ Package Manage添加git地址：https://github.com/BoyceLig/QuickOpenScene.git?p
 
 ### 配置文件位置
 
-`Assets/QuickOpenScene/Data/SceneConfig.asset`
-
-**说明:配置文件为自动索引，可以随意拖动插件的目录，但是不可以配置文件的相对路径，相对路径必须在 `QuickOpenScene/Data/SceneConfig.asset`**
+`UserSettings/QuickOpenSceneConfigData.json`
 
 后期需要什么功能可以在issues里提，会慢慢往里面加功能。
 
