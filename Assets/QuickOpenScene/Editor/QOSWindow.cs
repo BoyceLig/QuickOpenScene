@@ -71,40 +71,41 @@ namespace QuickOpenScene
             {
                 EditorGUILayout.BeginHorizontal();
                 //判断当前是否有数据
-                if (SceneConfigInfosSort()[index].SceneGUID != string.Empty)
+                if (SceneConfigInfosSort()[index].sceneGUID != string.Empty)
                 {
                     //名称检索(搜索框为空或者搜索名称包含)
                     EditorGUI.BeginDisabledGroup(!CheckSearchResults(SceneConfigInfosSort()[index]));
-                    if (GUI.Button(sceneRect, new GUIContent("  " + SceneConfigInfosSort()[index].SceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
+                    if (GUI.Button(sceneRect, new GUIContent("  " + SceneConfigInfosSort()[index].sceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
                     {
                         SceneConfigInfosSort()[index].Refresh();
 
                         //左键点击打开场景
                         if (Event.current.button == 0)
                         {
-                            if (SceneConfigInfosSort()[index].Scene == null)
+                            var sceneInfo = SceneConfigInfosSort()[index];
+                            if (IsSceneValid(sceneInfo))
                             {
-                                SceneConfigInfosSort()[index].Refresh();
+                                OpenScene(sceneInfo.scenePath);
                             }
-                            //判断场景是否丢失
-                            if (SceneConfigInfosSort()[index].Scene != null)
+                            else if (TryRefreshSceneInfo(sceneInfo))
                             {
-                                OpenScene(SceneConfigInfosSort()[index].ScenePath);
+                                OpenScene(sceneInfo.scenePath);
                             }
-                            else
+                            else if (EditorUtility.DisplayDialog("场景丢失", $"场景{sceneInfo.sceneName}已丢失，是否删除？", "删除数据", "取消"))
                             {
-                                SceneConfigInfosSort()[index].Refresh();
-                                if (SceneConfigInfosSort()[index].Scene != null)
-                                {
-                                    OpenScene(SceneConfigInfosSort()[index].ScenePath);
-                                }
-                                else
-                                {
-                                    if (EditorUtility.DisplayDialog("场景丢失", $"场景{SceneConfigInfosSort()[index].SceneName}已丢失，是否删除？", "删除数据", "取消"))
-                                    {
-                                        SceneConfigManage.RemoveSceneInfo(SceneConfigInfosSort()[index]);
-                                    }
-                                }
+                                SceneConfigManage.RemoveSceneInfo(sceneInfo);
+                            }
+
+                            bool IsSceneValid(SceneConfigInfo sceneInfo)
+                            {
+                                var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneInfo.scenePath);
+                                return sceneAsset != null;
+                            }
+
+                            bool TryRefreshSceneInfo(SceneConfigInfo sceneInfo)
+                            {
+                                sceneInfo.Refresh();
+                                return IsSceneValid(sceneInfo);
                             }
                         }
                         //右键点击弹出菜单
@@ -114,15 +115,15 @@ namespace QuickOpenScene
                             GenericMenu menu = new GenericMenu();
                             menu.AddItem(new GUIContent("复制场景名字"), false, () =>
                             {
-                                GUIUtility.systemCopyBuffer = SceneConfigInfosSort()[currIndex].SceneName;
+                                GUIUtility.systemCopyBuffer = SceneConfigInfosSort()[currIndex].sceneName;
                             });
                             menu.AddItem(new GUIContent("复制场景路径"), false, () =>
                             {
-                                GUIUtility.systemCopyBuffer = SceneConfigInfosSort()[currIndex].ScenePath;
+                                GUIUtility.systemCopyBuffer = SceneConfigInfosSort()[currIndex].scenePath;
                             });
                             menu.AddItem(new GUIContent("跳转到当前场景"), false, () =>
                             {
-                                var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SceneConfigInfosSort()[currIndex].ScenePath);
+                                var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(SceneConfigInfosSort()[currIndex].scenePath);
                                 if (scene != null)
                                 {
                                     EditorUtility.FocusProjectWindow();
@@ -130,7 +131,7 @@ namespace QuickOpenScene
                                 }
                                 else
                                 {
-                                    if (EditorUtility.DisplayDialog("场景丢失", $"场景{SceneConfigInfosSort()[currIndex].SceneName}已丢失，是否删除？", "删除数据", "取消"))
+                                    if (EditorUtility.DisplayDialog("场景丢失", $"场景{SceneConfigInfosSort()[currIndex].sceneName}已丢失，是否删除？", "删除数据", "取消"))
                                     {
                                         if (Config.GroupIndexPanel > 0)
                                         {
@@ -145,7 +146,7 @@ namespace QuickOpenScene
                             });
                             menu.AddItem(new GUIContent("删除当前场景"), false, () =>
                             {
-                                if (EditorUtility.DisplayDialog("场景丢失", $"场景{SceneConfigInfosSort()[currIndex].SceneName}已丢失，是否删除？", "删除数据", "取消"))
+                                if (EditorUtility.DisplayDialog("场景丢失", $"场景{SceneConfigInfosSort()[currIndex].sceneName}已丢失，是否删除？", "删除数据", "取消"))
                                 {
                                     if (Config.GroupIndexPanel > 0)
                                     {
@@ -153,7 +154,7 @@ namespace QuickOpenScene
                                     }
                                     else
                                     {
-                                        if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{SceneConfigInfosSort()[currIndex].SceneName}场景信息，是否删除？", "删除数据", "取消"))
+                                        if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{SceneConfigInfosSort()[currIndex].sceneName}场景信息，是否删除？", "删除数据", "取消"))
                                         {
                                             SceneConfigManage.RemoveSceneInfo(SceneConfigInfosSort()[currIndex]);
                                         }
@@ -183,7 +184,7 @@ namespace QuickOpenScene
                     {
                         if (Config.GroupIndexPanel == 0)
                         {
-                            if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{SceneConfigInfosSort()[index].SceneName}场景信息，是否删除？", "删除数据", "取消"))
+                            if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{SceneConfigInfosSort()[index].sceneName}场景信息，是否删除？", "删除数据", "取消"))
                             {
                                 SceneConfigManage.RemoveSceneInfo(SceneConfigInfosSort()[index]);
                             }
@@ -329,7 +330,7 @@ namespace QuickOpenScene
             {
                 EditorGUILayout.LabelField($"Version: {Config.currVersion}（最新版）", EditorStyles.centeredGreyMiniLabel);
             }
-        }        
+        }
 
         /// <summary>
         /// 匹配搜索结果是否包含字符
@@ -350,7 +351,7 @@ namespace QuickOpenScene
             }
             foreach (var item in allSearchText)
             {
-                if (!sceneConfigInfo.SceneName.ToLower().Contains(item.ToLower()))
+                if (!sceneConfigInfo.sceneName.ToLower().Contains(item.ToLower()))
                 {
                     return false;
                 }

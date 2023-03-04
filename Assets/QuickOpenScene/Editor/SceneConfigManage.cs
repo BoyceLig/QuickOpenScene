@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -95,7 +94,7 @@ namespace QuickOpenScene
             {
                 foreach (var item in Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos)
                 {
-                    if (item.SceneGUID == sceneConfigInfo.SceneGUID)
+                    if (item.sceneGUID == sceneConfigInfo.sceneGUID)
                     {
                         return;
                     }
@@ -104,7 +103,7 @@ namespace QuickOpenScene
 
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
             SaveSceneConfigJS();
-            Debug.Log("添加 " + sceneConfigInfo.SceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", sceneConfigInfo.Scene);
+            Debug.Log("添加 " + sceneConfigInfo.sceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
         }
 
         /// <summary>
@@ -114,7 +113,7 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfo">场景的配置信息</param>
         public static void RemoveSceneInfo(int groupIndex, SceneConfigInfo sceneConfigInfo)
         {
-            Debug.Log("删除 " + sceneConfigInfo.SceneName + " 场景成功！");
+            Debug.Log("删除 " + sceneConfigInfo.sceneName + " 场景成功！");
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
             SaveSceneConfigJS();
         }
@@ -131,7 +130,7 @@ namespace QuickOpenScene
                 {
                     if (Config.SceneConfigData.groupConfigs[i].sceneInfos[j] == sceneConfigInfo)
                     {
-                        Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.SceneName + " 场景成功！");
+                        Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.sceneName + " 场景成功！");
                         Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
                         SaveSceneConfigJS();
                     }
@@ -195,12 +194,7 @@ namespace QuickOpenScene
         static void SaveJson(string sceneConfigFullPath, SceneConfig sceneConfig)
         {
             string jsonString = JsonUtility.ToJson(sceneConfig, true);
-            byte[] databyte = Encoding.UTF8.GetBytes(jsonString);
-            FileStream jsonFileStream = File.Open(sceneConfigFullPath, FileMode.Create, FileAccess.ReadWrite);
-
-            jsonFileStream.Write(databyte, 0, databyte.Length);
-            jsonFileStream.Flush();
-            jsonFileStream.Close();
+            File.WriteAllText(sceneConfigFullPath, jsonString);
         }
 
         public static SceneConfig ReadSceneConfigJS()
@@ -210,6 +204,7 @@ namespace QuickOpenScene
             JsonUtility.FromJsonOverwrite(jsonString, sceneConfig);
             return sceneConfig;
         }
+
 
         /// <summary>
         /// 检查SceneConfig分组

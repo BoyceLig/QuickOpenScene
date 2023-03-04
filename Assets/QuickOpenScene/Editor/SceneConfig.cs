@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,139 +11,82 @@ namespace QuickOpenScene
     {
         public List<GroupConfigInfo> groupConfigs = new List<GroupConfigInfo>();
     }
+
+    // 场景组配置信息
     [Serializable]
-    public class GroupConfigInfo : IComparable<GroupConfigInfo>
+    public class GroupConfigInfo
     {
         public string groupName;
         public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
+
         public GroupConfigInfo(string groupName, List<SceneConfigInfo> sceneInfos)
         {
             this.groupName = groupName;
             this.sceneInfos = sceneInfos;
         }
-
-        //排序
-        public int CompareTo(GroupConfigInfo other)
-        {
-            int a = groupName.CompareTo(other.groupName);
-            return a;
-        }
     }
 
+    // 场景配置信息
     [Serializable]
     public class SceneConfigInfo : IComparable<SceneConfigInfo>
     {
-        [SerializeField]
-        SceneAsset scene;
-        [SerializeField]
-        string sceneName;
-        [SerializeField]
-        string scenePath;
-        [SerializeField]
-        string sceneGUID;
+        public string sceneName; // 场景名称
+        public string scenePath; // 场景路径
+        public string sceneGUID; // 场景GUID
 
+        // 构造函数
         public SceneConfigInfo(string sceneInfo, SceneConfigInfoType sceneConfigInfoType)
         {
             switch (sceneConfigInfoType)
             {
                 case SceneConfigInfoType.scenePath:
-                    ScenePath = sceneInfo;
+                    scenePath = sceneInfo;
+                    sceneGUID = AssetDatabase.AssetPathToGUID(sceneInfo);
+                    sceneName = Path.GetFileNameWithoutExtension(scenePath);
                     break;
                 case SceneConfigInfoType.sceneGUID:
-                    SceneGUID = sceneInfo;
+                    sceneGUID = sceneInfo;
+                    scenePath = AssetDatabase.GUIDToAssetPath(sceneGUID);
+                    sceneName = Path.GetFileNameWithoutExtension(scenePath);
                     break;
                 default:
                     break;
             }
         }
 
+        // 构造函数
         public SceneConfigInfo(SceneAsset scene)
         {
-            Scene = scene;
+            scenePath = AssetDatabase.GetAssetPath(scene);
+            sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
+            sceneName = scene.name;
         }
 
+        // 刷新场景信息
         public void Refresh()
-        {            
-            if (scene != null)
+        {
+            string fullPath = Path.Combine(Application.dataPath, scenePath);
+            if (File.Exists(fullPath))
             {
-                scenePath = AssetDatabase.GetAssetPath(scene);
-                sceneName = scene.name;
                 sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
             }
-            else if (sceneGUID != string.Empty)
+            else
             {
-                scenePath = AssetDatabase.GUIDToAssetPath(sceneGUID);
-                scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-                if (scene != null)
+                string newPath = AssetDatabase.GUIDToAssetPath(sceneGUID);
+                string extension = Path.GetExtension(newPath).ToLower();
+                if (extension == ".unity")
                 {
-                    sceneName = scene.name;
+                    scenePath = newPath;
+                    sceneName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(newPath));
                 }
             }
-            else if (ScenePath != string.Empty)
-            {
-                scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-                if (scene != null)
-                {
-                    sceneName = scene.name;
-                    sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
-                }
-            }
+            SceneConfigManage.SaveSceneConfigJS();
         }
 
-        //排序
+        // 比较场景信息，用于排序
         public int CompareTo(SceneConfigInfo other)
         {
-            int a = SceneName.CompareTo(other.SceneName);
-            return a;
-        }
-
-        public string SceneName
-        {
-            get { return sceneName; }
-            set { sceneName = value; }
-        }
-        public SceneAsset Scene
-        {
-            get
-            {
-                return scene;
-            }
-            set
-            {
-                scene = value;
-                sceneName = scene.name;
-                scenePath = AssetDatabase.GetAssetPath(value);
-                sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
-            }
-        }
-
-        public string ScenePath
-        {
-            get
-            {
-                return scenePath;
-            }
-            set
-            {
-                scenePath = value;
-                scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(value);
-                sceneName = scene.name;
-                sceneGUID = AssetDatabase.AssetPathToGUID(value);
-            }
-        }
-
-        public string SceneGUID
-        {
-            get
-            {
-                return sceneGUID;
-            }
-            set
-            {
-                sceneGUID = value;
-                scenePath = AssetDatabase.GUIDToAssetPath(value);
-                scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-            }
+            return sceneName.CompareTo(other.sceneName);
         }
     }
 }
