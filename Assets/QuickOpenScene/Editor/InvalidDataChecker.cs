@@ -8,7 +8,7 @@ namespace QuickOpenScene
     {
         static InvalidDataChecker()
         {
-            if (UpdateTime.AddHours(3) <= DateTime.Now)
+            if (UpdateTime.AddHours(24) <= DateTime.Now)
             {
                 new GetVersionInformation().GetJson();
             }
