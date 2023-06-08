@@ -281,7 +281,10 @@ namespace QuickOpenScene
             {
                 if (updateTime == null)
                 {
-                    updateTime = DateTime.Parse(SessionState.GetString("UpdateTime", new DateTime(1971, 1, 1).ToString()));
+                    if (!DateTime.TryParse(EditorUserSettings.GetConfigValue("UpdateTime"), out updateTime))
+                    {
+                        UpdateTime = new DateTime(1971, 1, 1);
+                    }
                 }
                 return updateTime;
             }
@@ -290,7 +293,7 @@ namespace QuickOpenScene
                 if (updateTime != value)
                 {
                     updateTime = value;
-                    SessionState.SetString("UpdateTime", value.ToString());
+                    EditorUserSettings.SetConfigValue("UpdateTime", value.ToString());
                 }
             }
         }
