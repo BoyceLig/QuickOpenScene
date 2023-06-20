@@ -171,7 +171,8 @@ namespace QuickOpenScene
             {
                 foreach (string guid in guids)
                 {
-                    if (AssetDatabase.GUIDToAssetPath(guid).Contains("QuickOpenScene/Editor/GithubJsonData.cs"))
+                    string tempPath = AssetDatabase.GUIDToAssetPath(guid);
+                    if (tempPath.Contains("QuickOpenScene/Editor/GithubJsonData.cs") || tempPath.Contains("com.boycelig.quickopenscene/Editor/GithubJsonData.cs"))
                     {
                         string githubJsonDataPath = AssetDatabase.GUIDToAssetPath(guid);
                         return githubJsonDataPath.Remove(githubJsonDataPath.IndexOf("/Editor/GithubJsonData.cs"));
