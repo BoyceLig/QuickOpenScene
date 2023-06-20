@@ -46,7 +46,9 @@ Package Manage添加git地址：https://github.com/BoyceLig/QuickOpenScene.git?p
 - 场景需要保存则弹框提醒询问是否保存
 - 场景丢失，点击打开会询问是否删除配置（不删除的情况下，同路径或者同guid点击打开对应场景事会自动刷新数据以关联新数据）
 - 右侧垃圾桶图标是删除场景配置功能
-- 配置文件处右键点击 `Properties...`可以呼出配置文件面板，在 `Scene Info` 栏可以调整场景的显示顺序，以及复制或者修改一些场景的数据（尽量不要在这里直接修改，三个数据是相互关联的，优先级是 `Scene>guid>path` ）。
+- 名称搜索高亮显示
+- 不同场景分组添加修改
+- 场景名称排序显示
 
 ### 配置文件位置
 
@@ -68,18 +70,19 @@ Package Manage添加git地址：https://github.com/BoyceLig/QuickOpenScene.git?p
 
 ![image](https://user-images.githubusercontent.com/49801599/212937454-86266e60-cfd8-4095-977c-4a05a86bf26f.png)
 
-![image](https://user-images.githubusercontent.com/49801599/212704250-e71ae19f-544c-42c4-9d72-211ee4e84d25.png)
+![image](https://github.com/BoyceLig/QuickOpenScene/assets/49801599/a80e98ec-a90a-41eb-9f30-87782559f66b)
 
-![image](https://user-images.githubusercontent.com/49801599/213752999-b267977c-8ba1-479b-ab57-3fca398dc322.png)
+![image](https://github.com/BoyceLig/QuickOpenScene/assets/49801599/b01deb63-ccf6-4aca-a3b9-5a658c5dc2fd)
 
-![image](https://user-images.githubusercontent.com/49801599/213753038-b4dc43c0-92ad-4d23-a68c-135e65ab5346.png)
 
-![image](https://user-images.githubusercontent.com/49801599/212937203-50d65da7-cdef-47a3-a37f-6259ab3c73aa.png)
+![image](https://github.com/BoyceLig/QuickOpenScene/assets/49801599/0e3b51e7-6a17-48db-8962-8ae6fb107c9d)
 
-![image](https://user-images.githubusercontent.com/49801599/212841692-b4720eb7-c957-4bcd-ad2a-8862ab94211c.png)
+![image](https://github.com/BoyceLig/QuickOpenScene/assets/49801599/14f9461b-e7b1-4dfd-bafd-26cf0f73258a)
 
-![image](https://user-images.githubusercontent.com/49801599/212841743-b0028e53-a7c2-4d38-850d-832945fffaa5.png)
+![image](https://github.com/BoyceLig/QuickOpenScene/assets/49801599/cd2a3519-06b4-402d-a81e-6a2fdb868436)
 
-![image](https://user-images.githubusercontent.com/49801599/212923658-e1d89f73-96fc-4c20-824c-0cab7591d8b5.png)
+![image](https://github.com/BoyceLig/QuickOpenScene/assets/49801599/45c8f475-b2bb-4ac5-bed4-0e0572409cc6)
+
+![image](https://github.com/BoyceLig/QuickOpenScene/assets/49801599/a56854ad-2401-4f4f-85a6-7c5a4a9c5e85)
 
 ![image](https://user-images.githubusercontent.com/49801599/213754677-efeb2332-f7c9-4bb5-a860-519aaddc1c3a.png)
