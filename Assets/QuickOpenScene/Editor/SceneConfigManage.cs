@@ -102,6 +102,7 @@ namespace QuickOpenScene
             }
 
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
+            QOSWindow.RefreshGetSceneConfigInfos();
             SaveSceneConfigJS();
             Debug.Log("添加 " + sceneConfigInfo.sceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
         }
@@ -115,7 +116,9 @@ namespace QuickOpenScene
         {
             Debug.Log("删除 " + sceneConfigInfo.sceneName + " 场景成功！");
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
+            QOSWindow.RefreshGetSceneConfigInfos();
             SaveSceneConfigJS();
+
         }
 
         /// <summary>
@@ -132,6 +135,7 @@ namespace QuickOpenScene
                     {
                         Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.sceneName + " 场景成功！");
                         Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
+                        QOSWindow.RefreshGetSceneConfigInfos();
                         SaveSceneConfigJS();
                     }
                 }

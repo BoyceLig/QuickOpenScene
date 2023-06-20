@@ -223,6 +223,7 @@ namespace QuickOpenScene
                 {
                     SessionState.SetInt("SortbyIndex", value);
                     sortbyIndex = value;
+                    QOSWindow.RefreshGetSceneConfigInfos();
                 }
             }
         }
@@ -249,6 +250,8 @@ namespace QuickOpenScene
             {
                 if (value != groupIndexPanel)
                 {
+                    QOSWindow.RefreshGetSceneConfigInfos();
+                    QOSWindow.RefreshSort();
                     SessionState.SetInt("GroupIndexPanel", value);
                     groupIndexPanel = value;
                     EditorWindow.GetWindow<QOSWindow>().SendEvent(EditorGUIUtility.CommandEvent("GroupIndexPanelChange"));
@@ -279,13 +282,14 @@ namespace QuickOpenScene
         {
             get
             {
-                if (updateTime == null)
+                if (updateTime == DateTime.MinValue)
                 {
                     if (!DateTime.TryParse(EditorUserSettings.GetConfigValue("UpdateTime"), out updateTime))
                     {
                         UpdateTime = new DateTime(1971, 1, 1);
                     }
                 }
+                //Debug.Log(updateTime.ToString());
                 return updateTime;
             }
             set
