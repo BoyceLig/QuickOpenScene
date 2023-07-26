@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -27,10 +28,10 @@ namespace QuickOpenScene
         }
         void ScenesPanelRefresh()
         {
-            if (sceneButtons == null || sceneButtons.count != GetSceneConfigInfos().Length || Event.current.commandName == "GroupIndexPanelChange")
+            if (sceneButtons == null || sceneButtons.count != GetSceneConfigInfos.Length || Event.current.commandName == "GroupIndexPanelChange")
             {
                 sceneButtons = Config.GroupIndexPanel == 0 ?
-                new ReorderableList(GetSceneConfigInfos(), typeof(SceneConfigInfo)) :
+                new ReorderableList(GetSceneConfigInfos, typeof(SceneConfigInfo)) :
                 new ReorderableList(Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos, typeof(SceneConfigInfo));
 
                 sceneButtons.displayAdd = false;
@@ -70,26 +71,25 @@ namespace QuickOpenScene
             if (Config.SceneConfigData.groupConfigs != null && Config.SceneConfigData.groupConfigs.Count > 0)
             {
                 EditorGUILayout.BeginHorizontal();
-                //Debug.Log(index +"       "+ GetSceneConfigInfos().Length);
 
                 //判断当前是否有数据
-                if (GetSceneConfigInfos()[index].sceneGUID != string.Empty)
+                if (GetSceneConfigInfos[index].sceneGUID != string.Empty)
                 {
                     //名称检索(搜索框为空或者搜索名称包含)
-                    isActive = !CheckSearchResults(GetSceneConfigInfos()[index]);
+                    isActive = !CheckSearchResults(GetSceneConfigInfos[index]);
                     EditorGUI.BeginDisabledGroup(isActive);
                     if (!isActive && searchText.Trim() != string.Empty)
                     {
                         buttonStyle.normal.textColor = Color.green;
                     }
-                    if (GUI.Button(sceneRect, new GUIContent("  " + GetSceneConfigInfos()[index].sceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
+                    if (GUI.Button(sceneRect, new GUIContent("  " + GetSceneConfigInfos[index].sceneName, EditorGUIUtility.IconContent("BuildSettings.SelectedIcon").image), buttonStyle))
                     {
-                        GetSceneConfigInfos()[index].Refresh();
+                        GetSceneConfigInfos[index].Refresh();
 
                         //左键点击打开场景
                         if (Event.current.button == 0)
                         {
-                            var sceneInfo = GetSceneConfigInfos()[index];
+                            var sceneInfo = GetSceneConfigInfos[index];
                             if (IsSceneValid(sceneInfo))
                             {
                                 OpenScene(sceneInfo.scenePath);
@@ -122,15 +122,15 @@ namespace QuickOpenScene
                             GenericMenu menu = new GenericMenu();
                             menu.AddItem(new GUIContent("复制场景名字"), false, () =>
                             {
-                                GUIUtility.systemCopyBuffer = GetSceneConfigInfos()[currIndex].sceneName;
+                                GUIUtility.systemCopyBuffer = GetSceneConfigInfos[currIndex].sceneName;
                             });
                             menu.AddItem(new GUIContent("复制场景路径"), false, () =>
                             {
-                                GUIUtility.systemCopyBuffer = GetSceneConfigInfos()[currIndex].scenePath;
+                                GUIUtility.systemCopyBuffer = GetSceneConfigInfos[currIndex].scenePath;
                             });
                             menu.AddItem(new GUIContent("跳转到当前场景"), false, () =>
                             {
-                                var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(GetSceneConfigInfos()[currIndex].scenePath);
+                                var scene = AssetDatabase.LoadAssetAtPath<SceneAsset>(GetSceneConfigInfos[currIndex].scenePath);
                                 if (scene != null)
                                 {
                                     EditorUtility.FocusProjectWindow();
@@ -138,35 +138,33 @@ namespace QuickOpenScene
                                 }
                                 else
                                 {
-                                    if (EditorUtility.DisplayDialog("场景丢失", $"场景{GetSceneConfigInfos()[currIndex].sceneName}已丢失，是否删除？", "删除数据", "取消"))
+                                    if (EditorUtility.DisplayDialog("场景丢失", $"场景{GetSceneConfigInfos[currIndex].sceneName}已丢失，是否删除？", "删除数据", "取消"))
                                     {
                                         if (Config.GroupIndexPanel > 0)
                                         {
-                                            SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, GetSceneConfigInfos()[currIndex]);
+                                            SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, GetSceneConfigInfos[currIndex]);
                                         }
                                         else
                                         {
-                                            SceneConfigManage.RemoveSceneInfo(GetSceneConfigInfos()[currIndex]);
+                                            SceneConfigManage.RemoveSceneInfo(GetSceneConfigInfos[currIndex]);
                                         }
                                     }
                                 }
                             });
                             menu.AddItem(new GUIContent("删除当前场景"), false, () =>
                             {
-                                if (EditorUtility.DisplayDialog("场景丢失", $"场景{GetSceneConfigInfos()[currIndex].sceneName}已丢失，是否删除？", "删除数据", "取消"))
+                                if (Config.GroupIndexPanel > 0)
                                 {
-                                    if (Config.GroupIndexPanel > 0)
+                                    SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, GetSceneConfigInfos[currIndex]);
+                                }
+                                else
+                                {
+                                    if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{GetSceneConfigInfos[currIndex].sceneName}场景信息，是否删除？", "删除数据", "取消"))
                                     {
-                                        SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, GetSceneConfigInfos()[currIndex]);
-                                    }
-                                    else
-                                    {
-                                        if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{GetSceneConfigInfos()[currIndex].sceneName}场景信息，是否删除？", "删除数据", "取消"))
-                                        {
-                                            SceneConfigManage.RemoveSceneInfo(GetSceneConfigInfos()[currIndex]);
-                                        }
+                                        SceneConfigManage.RemoveSceneInfo(GetSceneConfigInfos[currIndex]);
                                     }
                                 }
+
                             });
                             if (Config.GroupIndexPanel > 0)
                             {
@@ -191,14 +189,14 @@ namespace QuickOpenScene
                     {
                         if (Config.GroupIndexPanel == 0)
                         {
-                            if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{GetSceneConfigInfos()[index].sceneName}场景信息，是否删除？", "删除数据", "取消"))
+                            if (EditorUtility.DisplayDialog("删除警告", $"当前显示的为所有分组，将删除所有分组内的{GetSceneConfigInfos[index].sceneName}场景信息，是否删除？", "删除数据", "取消"))
                             {
-                                SceneConfigManage.RemoveSceneInfo(GetSceneConfigInfos()[index]);
+                                SceneConfigManage.RemoveSceneInfo(GetSceneConfigInfos[index]);
                             }
                         }
                         else
                         {
-                            SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, GetSceneConfigInfos()[index]);
+                            SceneConfigManage.RemoveSceneInfo(Config.CurrGroupIndex, GetSceneConfigInfos[index]);
                         }
                     }
                     EditorGUI.EndDisabledGroup();
@@ -246,7 +244,7 @@ namespace QuickOpenScene
 
             //场景计数，排序方式
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label("当前场景数量：" + GetSceneConfigInfos().Length, GUILayout.ExpandWidth(false));
+            GUILayout.Label("当前场景数量：" + GetSceneConfigInfos.Length, GUILayout.ExpandWidth(false));
             GUILayout.FlexibleSpace();
             GUILayout.Label("排序方式：", rightLableStyle, GUILayout.ExpandWidth(false));
             Config.SortbyIndex = EditorGUILayout.Popup(Config.SortbyIndex, sortbys, GUILayout.ExpandWidth(false), GUILayout.Width(70));
@@ -416,76 +414,75 @@ namespace QuickOpenScene
         static SceneConfigInfo[] tempSceneConfigInfos;
         static bool isGet = false;
         static bool isSort = false;
+
         /// <summary>
         /// 场景排序
         /// </summary>
         /// <returns>排序后结果</returns>
-        static SceneConfigInfo[] GetSceneConfigInfos()
+        static SceneConfigInfo[] GetSceneConfigInfos
         {
-            if (!isGet)
+            get
             {
-                if (Config.GroupIndexPanel == 0)
+                List<SceneConfigInfo> templist = new List<SceneConfigInfo>();
+                if (!isGet)
                 {
-                    int sceneCount = 0;
-                    for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
+                    if (Config.GroupIndexPanel == 0)
                     {
-                        for (int j = 0; j < Config.SceneConfigData.groupConfigs[i].sceneInfos.Count; j++)
-                        {
-                            sceneCount++;
-                        }
-                    }
-                    if (tempSceneConfigInfos == null || tempSceneConfigInfos.Length != sceneCount)
-                    {
-                        tempSceneConfigInfos = new SceneConfigInfo[sceneCount];
-                        int currIndex = 0;
                         for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
                         {
                             for (int j = 0; j < Config.SceneConfigData.groupConfigs[i].sceneInfos.Count; j++)
                             {
-                                tempSceneConfigInfos[currIndex] = Config.SceneConfigData.groupConfigs[i].sceneInfos[j];
-                                currIndex++;
+                                templist.Add(Config.SceneConfigData.groupConfigs[i].sceneInfos[j]);
                             }
                         }
+                        tempSceneConfigInfos = templist.ToArray();
                     }
+                    else
+                    {
+                        if (tempSceneConfigInfos != Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos.ToArray())
+                        {
+                            tempSceneConfigInfos = Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos.ToArray();
+                        }
+                    }
+                    isGet = true;
                 }
-                else
+
+                switch (Config.SortbyIndex)
                 {
-                    if (tempSceneConfigInfos != Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos.ToArray())
-                    {
-                        tempSceneConfigInfos = Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos.ToArray();
-                    }
+                    //默认排序
+                    case 0:
+                        isSort = false;
+                        if (Config.GroupIndexPanel > 0)
+                        {
+                            return Config.SceneConfigData.groupConfigs[Config.CurrGroupIndex].sceneInfos.ToArray();
+                        }
+                        else
+                        {
+                            return tempSceneConfigInfos;
+                        }
+                    case 1:
+                        if (!isSort)
+                        {
+                            Array.Sort(tempSceneConfigInfos);
+                            //Debug.Log("排序");
+                        }
+                        isSort = true;
+                        return tempSceneConfigInfos;
+                    default:
+                        goto case 0;
                 }
-                isGet = true;
             }
 
-
-            //Debug.Log(isSort);
-            switch (Config.SortbyIndex)
-            {
-                //默认排序
-                case 0:
-                    isSort = false;
-                    return tempSceneConfigInfos;
-                case 1:
-                    if (!isSort)
-                    {
-                        Array.Sort(tempSceneConfigInfos);
-                        //Debug.Log("排序");
-                    }
-                    isSort = true;
-                    return tempSceneConfigInfos;
-                default:
-                    goto case 0;
-            }
+            set => tempSceneConfigInfos = value;
         }
 
+
+        /// <summary>
+        /// 标记重新获取数据
+        /// </summary>
         public static void RefreshGetSceneConfigInfos()
         {
             isGet = false; // 标记需要重新获取数据
-        }
-
-        public static void RefreshSort()
-        {
             isSort = false;
         }
     }

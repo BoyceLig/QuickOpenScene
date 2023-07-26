@@ -221,9 +221,10 @@ namespace QuickOpenScene
             {
                 if (sortbyIndex != value)
                 {
+                    QOSWindow.RefreshGetSceneConfigInfos();
                     SessionState.SetInt("SortbyIndex", value);
                     sortbyIndex = value;
-                    QOSWindow.RefreshGetSceneConfigInfos();
+                    
                 }
             }
         }
@@ -251,7 +252,6 @@ namespace QuickOpenScene
                 if (value != groupIndexPanel)
                 {
                     QOSWindow.RefreshGetSceneConfigInfos();
-                    QOSWindow.RefreshSort();
                     SessionState.SetInt("GroupIndexPanel", value);
                     groupIndexPanel = value;
                     EditorWindow.GetWindow<QOSWindow>().SendEvent(EditorGUIUtility.CommandEvent("GroupIndexPanelChange"));
