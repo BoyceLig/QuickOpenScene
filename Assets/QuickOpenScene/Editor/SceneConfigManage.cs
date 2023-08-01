@@ -103,6 +103,7 @@ namespace QuickOpenScene
 
             Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
             QOSWindow.RefreshGetSceneConfigInfos();
+            Config.GroupIndexPanel = Config.CurrGroupIndex + 1;
             SaveSceneConfigJS();
             Debug.Log("添加 " + sceneConfigInfo.sceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
         }
