@@ -45,6 +45,14 @@ namespace QuickOpenScene
             SceneConfigManage.SaveSceneConfigJS();
         }
 
+        private void OnEnable()
+        {
+            if (Config.GroupIndexPanel == 0)
+            {
+                Config.GroupIndexPanel = 1;
+            }
+        }
+
         static void DrawHeaderCallback(Rect rect)
         {
             GUI.Label(rect, new GUIContent(Config.GroupStr[Config.GroupIndexPanel] + "场景"));
