@@ -14,6 +14,10 @@ namespace QuickOpenScene
         {
             get
             {
+                if (instance.m_sceneConfig == null)
+                {
+                    instance.m_sceneConfig = new SceneConfig();
+                }
                 if (instance.m_sceneConfig.groupConfigs.Count == 0)
                 {
                     instance.m_sceneConfig.groupConfigs.Add(new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
