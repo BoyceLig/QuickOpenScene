@@ -58,7 +58,7 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfoType">info 的类型</param>
         public static void AddScene(int groupIndex, string info, SceneConfigInfoType sceneConfigInfoType)
         {
-            if (Config.SceneConfigData.groupConfigs.Count <= groupIndex)
+            if (SceneConfigData.sceneConfig.groupConfigs.Count <= groupIndex)
             {
                 return;
             }
@@ -85,14 +85,14 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfo">场景数据</param>
         public static void AddScene(int groupIndex, SceneConfigInfo sceneConfigInfo)
         {
-            if (Config.SceneConfigData.groupConfigs.Count <= groupIndex)
+            if (SceneConfigData.sceneConfig.groupConfigs.Count <= groupIndex)
             {
                 return;
             }
 
-            if (Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Count > 0)
+            if (SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos.Count > 0)
             {
-                foreach (var item in Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos)
+                foreach (var item in SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos)
                 {
                     if (item.sceneGUID == sceneConfigInfo.sceneGUID)
                     {
@@ -101,16 +101,16 @@ namespace QuickOpenScene
                 }
             }
 
-            Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
+            SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
             QOSWindow.RefreshGetSceneConfigInfos();
 
             if (Config.GroupIndexPanel == 0)
             {
                 Config.GroupIndexPanel = 1;
             }
-            
-            SaveSceneConfigJS();
-            Debug.Log("添加 " + sceneConfigInfo.sceneName + " 场景到分组" + Config.SceneConfigData.groupConfigs[groupIndex].groupName + " 成功！", AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
+
+            SceneConfigData.instance.SaveDate();
+            Debug.Log("添加 " + sceneConfigInfo.sceneName + " 场景到分组" + SceneConfigData.sceneConfig.groupConfigs[groupIndex].groupName + " 成功！", AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
         }
 
         /// <summary>
@@ -121,10 +121,9 @@ namespace QuickOpenScene
         public static void RemoveSceneInfo(int groupIndex, SceneConfigInfo sceneConfigInfo)
         {
             Debug.Log("删除 " + sceneConfigInfo.sceneName + " 场景成功！");
-            Config.SceneConfigData.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
+            SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos.Remove(sceneConfigInfo);
             QOSWindow.RefreshGetSceneConfigInfos();
-            SaveSceneConfigJS();
-
+            SceneConfigData.instance.SaveDate();
         }
 
         /// <summary>
@@ -133,16 +132,16 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfo">场景的配置信息</param>
         public static void RemoveSceneInfo(SceneConfigInfo sceneConfigInfo)
         {
-            for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
+            for (int i = 0; i < SceneConfigData.sceneConfig.groupConfigs.Count; i++)
             {
-                for (int j = 0; j < Config.SceneConfigData.groupConfigs[i].sceneInfos.Count; j++)
+                for (int j = 0; j < SceneConfigData.sceneConfig.groupConfigs[i].sceneInfos.Count; j++)
                 {
-                    if (Config.SceneConfigData.groupConfigs[i].sceneInfos[j] == sceneConfigInfo)
+                    if (SceneConfigData.sceneConfig.groupConfigs[i].sceneInfos[j] == sceneConfigInfo)
                     {
-                        Debug.Log("删除 " + Config.SceneConfigData.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.sceneName + " 场景成功！");
-                        Config.SceneConfigData.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
+                        Debug.Log("删除 " + SceneConfigData.sceneConfig.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.sceneName + " 场景成功！");
+                        SceneConfigData.sceneConfig.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
                         QOSWindow.RefreshGetSceneConfigInfos();
-                        SaveSceneConfigJS();
+                        SceneConfigData.instance.SaveDate();
                     }
                 }
             }
@@ -188,53 +187,16 @@ namespace QuickOpenScene
             return null;
         }
 
-        /// <summary>
-        /// 创建QuickOpenSceneConfigJS文件
-        /// </summary>
-        /// <returns>SceneConfig</returns>
-        public static SceneConfig CreateSceneConfig()
-        {
-
-            SceneConfig sceneConfig = CreateInstance<SceneConfig>();
-            sceneConfig.groupConfigs.Add(new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
-            SaveJson(Config.sceneConfigDatePath, sceneConfig);
-
-            return sceneConfig;
-        }
-
-        static void SaveJson(string sceneConfigFullPath, SceneConfig sceneConfig)
-        {
-            string jsonString = JsonUtility.ToJson(sceneConfig, true);
-            File.WriteAllText(sceneConfigFullPath, jsonString);
-        }
-
-        public static SceneConfig ReadSceneConfigJS()
-        {
-            string jsonString = File.ReadAllText(Config.sceneConfigDatePath);
-            SceneConfig sceneConfig = CreateInstance<SceneConfig>();
-            JsonUtility.FromJsonOverwrite(jsonString, sceneConfig);
-            return sceneConfig;
-        }
-
 
         /// <summary>
         /// 检查SceneConfig分组
         /// </summary>
         public static void CheckSceneConfig()
         {
-            if (Config.SceneConfigData.groupConfigs.Count == 0)
+            if (SceneConfigData.sceneConfig.groupConfigs.Count == 0)
             {
-                Config.SceneConfigData.groupConfigs.Add(new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
+                SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
             }
         }
-
-        /// <summary>
-        /// 保存数据
-        /// </summary>
-        public static void SaveSceneConfigJS()
-        {
-            SaveJson(Config.sceneConfigDatePath, Config.SceneConfigData);
-        }
-
     }
 }

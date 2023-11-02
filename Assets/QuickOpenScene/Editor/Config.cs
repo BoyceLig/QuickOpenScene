@@ -25,9 +25,9 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.9.3";
+        public const string currVersion = "1.9.4";
 
-        public const string sceneConfigDatePath = "UserSettings/QuickOpenSceneConfigData.json";
+        public const string sceneConfigDatePath = "UserSettings/QuickOpenSceneConfigData.asset";
 
         //菜单路径
         public struct MenuPath
@@ -64,30 +64,6 @@ namespace QuickOpenScene
                     SetValue(ref pluginPath, "PluginPath", SceneConfigManage.GetPluginPath());
                 }
                 return pluginPath;
-            }
-        }
-
-        //场景配置文件数据
-        static SceneConfig sceneConfig;
-        /// <summary>
-        /// 获取SceneConfig配置文件
-        /// </summary>
-        public static SceneConfig SceneConfigData
-        {
-            get
-            {
-                if (sceneConfig == null)
-                {
-                    if (File.Exists(sceneConfigDatePath))
-                    {
-                        sceneConfig = SceneConfigManage.ReadSceneConfigJS();
-                    }
-                    else
-                    {
-                        sceneConfig = SceneConfigManage.CreateSceneConfig();
-                    }
-                }
-                return sceneConfig;
             }
         }
 
@@ -224,7 +200,7 @@ namespace QuickOpenScene
                     QOSWindow.RefreshGetSceneConfigInfos();
                     SessionState.SetInt("SortbyIndex", value);
                     sortbyIndex = value;
-                    
+
                 }
             }
         }
@@ -241,9 +217,9 @@ namespace QuickOpenScene
                 {
                     groupIndexPanel = SessionState.GetInt("GroupIndexPanel", 0);
                 }
-                else if (groupIndexPanel > SceneConfigData.groupConfigs.Count)
+                else if (groupIndexPanel > SceneConfigData.sceneConfig.groupConfigs.Count)
                 {
-                    groupIndexPanel = SceneConfigData.groupConfigs.Count;
+                    groupIndexPanel = SceneConfigData.sceneConfig.groupConfigs.Count;
                 }
                 return groupIndexPanel;
             }
@@ -310,13 +286,13 @@ namespace QuickOpenScene
         {
             get
             {
-                if (groupStr == null || groupStr.Length != SceneConfigData.groupConfigs.Count + 1)
+                if (groupStr == null || groupStr.Length != SceneConfigData.sceneConfig.groupConfigs.Count + 1)
                 {
-                    groupStr = new string[SceneConfigData.groupConfigs.Count + 1];
+                    groupStr = new string[SceneConfigData.sceneConfig.groupConfigs.Count + 1];
                     groupStr[0] = ("所有");
-                    for (int i = 0; i < SceneConfigData.groupConfigs.Count; i++)
+                    for (int i = 0; i < SceneConfigData.sceneConfig.groupConfigs.Count; i++)
                     {
-                        groupStr[i + 1] = SceneConfigData.groupConfigs[i].groupName;
+                        groupStr[i + 1] = SceneConfigData.sceneConfig.groupConfigs[i].groupName;
                     }
                 }
                 return groupStr;

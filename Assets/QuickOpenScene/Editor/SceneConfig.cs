@@ -6,33 +6,78 @@ using UnityEngine;
 
 namespace QuickOpenScene
 {
-    //[CreateAssetMenu(menuName = "Quick Open Scene/创建配置文件")]
-    public class SceneConfig : ScriptableObject
+    [Serializable]
+    public class SceneConfig
     {
-        public List<GroupConfigInfo> groupConfigs = new List<GroupConfigInfo>();
+        [SerializeField]
+        List<GroupConfigInfo> m_groupConfigs;
+
+        public List<GroupConfigInfo> groupConfigs
+        {
+            get
+            {
+                if (m_groupConfigs == null)
+                {
+                    m_groupConfigs = new List<GroupConfigInfo>();
+                }
+                return m_groupConfigs;
+            }
+            set
+            {
+                m_groupConfigs = value;
+            }
+        }
     }
 
     // 场景组配置信息
     [Serializable]
     public class GroupConfigInfo
     {
-        public string groupName;
-        public List<SceneConfigInfo> sceneInfos = new List<SceneConfigInfo>();
+        [SerializeField]
+        string m_groupName;
+        [SerializeField]
+        List<SceneConfigInfo> m_sceneInfos;
+
+        public string groupName { get => m_groupName; set => m_groupName = value; }
+        public List<SceneConfigInfo> sceneInfos
+        {
+            get
+            {
+                if (m_sceneInfos == null)
+                {
+                    m_sceneInfos = new List<SceneConfigInfo>();
+                }
+                return m_sceneInfos;
+            }
+            set => m_sceneInfos = value;
+        }
+
+
 
         public GroupConfigInfo(string groupName, List<SceneConfigInfo> sceneInfos)
         {
-            this.groupName = groupName;
-            this.sceneInfos = sceneInfos;
+            m_groupName = groupName;
+            m_sceneInfos = sceneInfos;
         }
     }
+
+
 
     // 场景配置信息
     [Serializable]
     public class SceneConfigInfo : IComparable<SceneConfigInfo>
     {
-        public string sceneName; // 场景名称
-        public string scenePath; // 场景路径
-        public string sceneGUID; // 场景GUID
+        [SerializeField]
+        string m_sceneName; // 场景名称
+        [SerializeField]
+        string m_scenePath; // 场景路径
+        [SerializeField]
+        string m_sceneGUID; // 场景GUID
+
+        public string sceneName { get => m_sceneName; set => m_sceneName = value; }
+        public string scenePath { get => m_scenePath; set => m_scenePath = value; }
+        public string sceneGUID { get => m_sceneGUID; set => m_sceneGUID = value; }
+
 
         // 构造函数
         public SceneConfigInfo(string sceneInfo, SceneConfigInfoType sceneConfigInfoType)
@@ -63,12 +108,17 @@ namespace QuickOpenScene
         }
 
         // 刷新场景信息
-        public void Refresh()
+        public bool Refresh()
         {
             string fullPath = Path.Combine(Application.dataPath, scenePath);
             if (File.Exists(fullPath))
             {
-                sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
+                if (sceneGUID != AssetDatabase.AssetPathToGUID(scenePath))
+                {
+                    sceneGUID = AssetDatabase.AssetPathToGUID(scenePath);
+                    return true;
+                }
+
             }
             else
             {
@@ -76,11 +126,16 @@ namespace QuickOpenScene
                 string extension = Path.GetExtension(newPath).ToLower();
                 if (extension == ".unity")
                 {
-                    scenePath = newPath;
-                    sceneName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(newPath));
+                    if (scenePath != newPath || sceneName != Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(newPath)))
+                    {
+                        scenePath = newPath;
+                        sceneName = Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(newPath));
+                        return true;
+                    }
+
                 }
             }
-            SceneConfigManage.SaveSceneConfigJS();
+            return false;
         }
 
         // 比较场景信息，用于排序

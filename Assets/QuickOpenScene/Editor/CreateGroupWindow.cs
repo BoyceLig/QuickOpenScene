@@ -23,15 +23,15 @@ namespace QuickOpenScene
                 tempIndex = Config.GroupIndexPanel - 1;
             }
 
-            tempStr = Config.SceneConfigData.groupConfigs[tempIndex].groupName;
+            tempStr = SceneConfigData.sceneConfig.groupConfigs[tempIndex].groupName;
             tempStr = NameAdd(tempStr);
             bool nameRepeat = false;
             do
             {
                 nameRepeat = false;
-                for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
+                for (int i = 0; i < SceneConfigData.sceneConfig.groupConfigs.Count; i++)
                 {
-                    if (Config.SceneConfigData.groupConfigs[i].groupName == tempStr)
+                    if (SceneConfigData.sceneConfig.groupConfigs[i].groupName == tempStr)
                     {
                         nameRepeat = true;
                         tempStr = NameAdd(tempStr);
@@ -57,9 +57,9 @@ namespace QuickOpenScene
             tempStr = GUILayout.TextField(tempStr);
             if (GUILayout.Button("确认"))
             {
-                for (int i = 0; i < Config.SceneConfigData.groupConfigs.Count; i++)
+                for (int i = 0; i < SceneConfigData.sceneConfig.groupConfigs.Count; i++)
                 {
-                    if (Config.SceneConfigData.groupConfigs[i].groupName == tempStr)
+                    if (SceneConfigData.sceneConfig.groupConfigs[i].groupName == tempStr)
                     {
                         if (EditorUtility.DisplayDialog("命名警告", $"当前分组命名重复，点击确认命名将为：{NameAdd(tempStr)},点击取消重新输入命名。", "确认", "取消"))
                         {
@@ -73,19 +73,19 @@ namespace QuickOpenScene
                 {
                     //创建分组
                     case 0:
-                        Config.SceneConfigData.groupConfigs.Add(new GroupConfigInfo(tempStr, new List<SceneConfigInfo>()));
+                        SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo(tempStr, new List<SceneConfigInfo>()));
                         //跳转到新建的组
-                        Config.GroupIndexPanel = Config.SceneConfigData.groupConfigs.Count;
+                        Config.GroupIndexPanel = SceneConfigData.sceneConfig.groupConfigs.Count;
                         break;
                     //重命名分组
                     case 1:
-                        Config.SceneConfigData.groupConfigs[Config.GroupIndexPanel - 1].groupName = tempStr;
+                        SceneConfigData.sceneConfig.groupConfigs[Config.GroupIndexPanel - 1].groupName = tempStr;
                         Config.GroupStr[Config.GroupIndexPanel] = tempStr;
                         break;
                     default:
                         break;
                 }
-                SceneConfigManage.SaveSceneConfigJS();
+                SceneConfigData.instance.SaveDate();
                 Close();
             }
         }
