@@ -27,7 +27,7 @@ namespace QuickOpenScene
         //当前版本
         public const string currVersion = "1.9.4";
 
-        public const string sceneConfigDatePath = "UserSettings/QuickOpenSceneConfigData.asset";
+        public const string sceneConfigDatePath = "UserSettings/QOSUserSettings.asset";
 
         //菜单路径
         public struct MenuPath
