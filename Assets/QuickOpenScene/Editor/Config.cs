@@ -25,7 +25,7 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.9.4";
+        public const string currVersion = "1.9.5";
 
         public const string sceneConfigDatePath = "UserSettings/QOSUserSettings.asset";
 
@@ -36,6 +36,7 @@ namespace QuickOpenScene
             public const string aboutWindow = "Tools/Quick Open Scene/关于";
             public const string refreshQOSWindow = "Tools/Quick Open Scene/刷新主界面";
             public const string addCurrScene = "Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到当前分组";
+            public const string addGroupFromScene = "Assets/Tools/Quick Open Scene/以当前目录为分组创建并同步场景";
             public const string addAllScene = "Assets/Tools/Quick Open Scene/添加所有场景到当前分组";
         }
 

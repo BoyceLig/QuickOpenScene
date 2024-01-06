@@ -14,6 +14,8 @@ namespace QuickOpenScene
         string[] sortbys = new string[] { "默认排序", "命名排序" };
         ReorderableList sceneButtons;
         Vector2 scrollViewPos;
+        readonly Vector2 createWindowSize = new Vector2(260, 150);
+        static Vector2 qosWindowMinSize = new Vector2(260, 200);
         GUIStyle versionStyle, buttonStyle, rightLableStyle;
         static string searchText = string.Empty;
 
@@ -22,7 +24,7 @@ namespace QuickOpenScene
         {
             QOSWindow mainWindow = GetWindow<QOSWindow>();
             mainWindow.titleContent = new GUIContent("快速打开场景");
-            mainWindow.minSize = new Vector2(260, 200);
+            mainWindow.minSize = qosWindowMinSize;
             mainWindow.Show();
             SceneConfigManage.CheckSceneConfig();
         }
@@ -255,93 +257,107 @@ namespace QuickOpenScene
 
             //名称检索
             EditorGUILayout.BeginHorizontal();
-            try
+            GUILayout.Label("名称搜索：", GUILayout.ExpandWidth(false));
+            searchText = EditorGUILayout.TextField(searchText);
+            if (GUILayout.Button("清空", GUILayout.ExpandWidth(false)))
             {
-                GUILayout.Label("名称搜索：", GUILayout.ExpandWidth(false));
-                searchText = EditorGUILayout.TextField(searchText);
-                if (GUILayout.Button("清空", GUILayout.ExpandWidth(false)))
-                {
-                    searchText = string.Empty;
-                }
+                searchText = string.Empty;
             }
-            finally
-            {
-                EditorGUILayout.EndHorizontal();
-            }
+
+            EditorGUILayout.EndHorizontal();
+
 
             //场景计数，排序方式
             EditorGUILayout.BeginHorizontal();
-            try
-            {
-                GUILayout.Label("当前场景数量：" + GetSceneConfigInfos.Length, GUILayout.ExpandWidth(false));
-                GUILayout.FlexibleSpace();
-                GUILayout.Label("排序方式：", rightLableStyle, GUILayout.ExpandWidth(false));
-                Config.SortbyIndex = EditorGUILayout.Popup(Config.SortbyIndex, sortbys, GUILayout.ExpandWidth(false), GUILayout.Width(70));                
-            }
-            finally
-            {
-                EditorGUILayout.EndHorizontal();
-            }
+            GUILayout.Label("当前场景数量：" + GetSceneConfigInfos.Length, GUILayout.ExpandWidth(false));
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("排序方式：", rightLableStyle, GUILayout.ExpandWidth(false));
+            Config.SortbyIndex = EditorGUILayout.Popup(Config.SortbyIndex, sortbys, GUILayout.ExpandWidth(false), GUILayout.Width(70));
+            EditorGUILayout.EndHorizontal();
+
 
             EditorGUILayout.BeginHorizontal();
-            try
+            GUILayout.Label("分组：", GUILayout.ExpandWidth(false));
+            EditorGUI.BeginChangeCheck();
             {
-                GUILayout.Label("分组：", GUILayout.ExpandWidth(false));
-                EditorGUI.BeginChangeCheck();
+                Config.GroupIndexPanel = EditorGUILayout.Popup(Config.GroupIndexPanel, Config.GroupStr, GUILayout.ExpandWidth(true));
+                if (EditorGUI.EndChangeCheck())
                 {
-                    Config.GroupIndexPanel = EditorGUILayout.Popup(Config.GroupIndexPanel, Config.GroupStr, GUILayout.ExpandWidth(true));
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        GUIUtility.ExitGUI();
-                    }
+                    GUIUtility.ExitGUI();
                 }
-                //新建分组按钮
-                if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("Toolbar Plus").image, "新建一个新的分组并跳转"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
+            }
+            //新建分组按钮
+            if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("Toolbar Plus").image, "新建一个新的分组并跳转"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
+            {
+                CreateGroupWindow window = GetWindow<CreateGroupWindow>(true);
+                window.SendEvent(EditorGUIUtility.CommandEvent("Create"));
+                window.titleContent = new GUIContent("创建分组");
+                window.minSize = createWindowSize;
+                window.maxSize = createWindowSize;
+                Rect mainRect = GetWindow<QOSWindow>().position;
+                window.position = new Rect(mainRect.position + mainRect.size / 2 - new Vector2(window.position.size.x / 2, 0), window.minSize);
+                window.Show();
+                window.Focus();
+
+            }
+            //根据路径刷新场景信息
+            EditorGUI.BeginDisabledGroup(!SceneConfigData.sceneConfig.groupConfigs[Config.CurrGroupIndex].UseBindPath);
+            {                
+                if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("Refresh").image, "更新分组内绑定路径的场景"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
+                {                   
+                    if (Config.GroupIndexPanel == 0)
+                    {
+                        for (int i = 0; i < SceneConfigData.sceneConfig.groupConfigs.Count; i++)
+                        {
+                            if (EditorUtility.DisplayCancelableProgressBar("刷新场景信息", SceneConfigData.sceneConfig.groupConfigs[i].groupName, i / SceneConfigData.sceneConfig.groupConfigs.Count - 1))
+                            {
+                                EditorUtility.ClearProgressBar();
+                                return;
+                            }                            
+                            SceneConfigManage.RefreshCurrSceneConfigForPath(i);
+                        }
+                    }
+                    else
+                    {
+                        SceneConfigManage.RefreshCurrSceneConfigForPath(Config.CurrGroupIndex);
+                    }
+                    EditorUtility.ClearProgressBar();
+                }
+            }
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUI.BeginDisabledGroup(Config.GroupIndexPanel == 0);
+            {
+                //重命名
+                if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("editicon.sml").image, "修改分组属性"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
                 {
                     CreateGroupWindow window = GetWindow<CreateGroupWindow>(true);
-                    window.titleContent = new GUIContent("创建分组");
-                    window.minSize = new Vector2(260, 80);
-                    window.maxSize = new Vector2(260, 80);
+                    window.titleContent = new GUIContent(Config.GroupStr[Config.GroupIndexPanel] + "分组属性");
+                    window.minSize = createWindowSize;
+                    window.maxSize = createWindowSize;
                     Rect mainRect = GetWindow<QOSWindow>().position;
                     window.position = new Rect(mainRect.position + mainRect.size / 2 - new Vector2(window.position.size.x / 2, 0), window.minSize);
                     window.Show();
                     window.Focus();
-                    window.SendEvent(EditorGUIUtility.CommandEvent("Create"));
+                    window.SendEvent(EditorGUIUtility.CommandEvent("Rename"));
                 }
-                EditorGUI.BeginDisabledGroup(Config.GroupIndexPanel == 0);
-                {
-                    //重命名
-                    if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("editicon.sml").image, "重命名当前分组"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
-                    {
-                        CreateGroupWindow window = GetWindow<CreateGroupWindow>(true);
-                        window.titleContent = new GUIContent("重命名分组");
-                        window.minSize = new Vector2(260, 80);
-                        window.maxSize = new Vector2(260, 80);
-                        Rect mainRect = GetWindow<QOSWindow>().position;
-                        window.position = new Rect(mainRect.position + mainRect.size / 2 - new Vector2(window.position.size.x / 2, 0), window.minSize);
-                        window.Show();
-                        window.Focus();
-                        window.SendEvent(EditorGUIUtility.CommandEvent("Rename"));
-                    }
 
-                    EditorGUI.BeginDisabledGroup(SceneConfigData.sceneConfig.groupConfigs.Count == 1);
-                    {
-                        //删除分组
-                        if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("TreeEditor.Trash").image, "删除当前分组和当前分组内的场景数据"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
-                        {
-                            Config.GroupIndexPanel -= 1;
-                            SceneConfigData.sceneConfig.groupConfigs.RemoveAt(Config.GroupIndexPanel);
-                            SceneConfigData.instance.SaveDate();
-                        }
-                        EditorGUI.EndDisabledGroup();
+                EditorGUI.BeginDisabledGroup(SceneConfigData.sceneConfig.groupConfigs.Count == 1);
+                {
+                    //删除分组
+                    if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("TreeEditor.Trash").image, "删除当前分组和当前分组内的场景数据"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
+                    {                        
+                        Config.GroupIndexPanel -= 1;
+                        SceneConfigData.sceneConfig.groupConfigs.RemoveAt(Config.GroupIndexPanel);
+                        SceneConfigData.instance.SaveDate();
+                        GUIUtility.ExitGUI();
                     }
                     EditorGUI.EndDisabledGroup();
-                }               
+                }
+                EditorGUI.EndDisabledGroup();
             }
-            finally
-            {
-                EditorGUILayout.EndHorizontal();
-            }
+            EditorGUILayout.EndHorizontal();
+
 
             scrollViewPos = GUILayout.BeginScrollView(scrollViewPos);
             sceneButtons.DoLayoutList();

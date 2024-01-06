@@ -33,12 +33,32 @@ namespace QuickOpenScene
     [Serializable]
     public class GroupConfigInfo
     {
-        [SerializeField]
-        string m_groupName;
-        [SerializeField]
-        List<SceneConfigInfo> m_sceneInfos;
+        public enum Type
+        {
+            Add, Sync
+        }
 
+        [SerializeField] string m_groupName;
+        [SerializeField] bool m_UseBindPath;
+        [SerializeField] Type m_RefreshType;
+        [SerializeField] string m_Path;
+        [SerializeField] List<SceneConfigInfo> m_sceneInfos;
+
+        #region 属性
+        /// <summary>
+        /// 分组命名
+        /// </summary>
         public string groupName { get => m_groupName; set => m_groupName = value; }
+
+        /// <summary>
+        /// 是否使用同步
+        /// </summary>
+        public bool UseBindPath { get => m_UseBindPath; set => m_UseBindPath = value; }
+
+        /// <summary>
+        /// 同步路径
+        /// </summary>
+        public string Path { get => m_Path; set => m_Path = value; }
         public List<SceneConfigInfo> sceneInfos
         {
             get
@@ -52,13 +72,30 @@ namespace QuickOpenScene
             set => m_sceneInfos = value;
         }
 
+        /// <summary>
+        /// 0为增加，1为同步
+        /// </summary>
+        public Type RefreshType { get => m_RefreshType; set => m_RefreshType = value; }
+        #endregion
 
-
+        #region 构造函数
         public GroupConfigInfo(string groupName, List<SceneConfigInfo> sceneInfos)
         {
             m_groupName = groupName;
+            m_UseBindPath = false;
+            m_Path = string.Empty;
             m_sceneInfos = sceneInfos;
         }
+
+        public GroupConfigInfo(string groupName, bool useBindPath, Type refreshType, string path, List<SceneConfigInfo> sceneInfos)
+        {
+            m_groupName = groupName;
+            m_UseBindPath = useBindPath;
+            m_RefreshType = refreshType;
+            m_Path = path;
+            m_sceneInfos = sceneInfos;
+        }
+        #endregion
     }
 
 

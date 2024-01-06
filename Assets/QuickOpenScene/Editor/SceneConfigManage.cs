@@ -39,6 +39,105 @@ namespace QuickOpenScene
             }
         }
 
+        [MenuItem(Config.MenuPath.addGroupFromScene)]
+        static void AddGroupFromScene()
+        {
+            string[] guids = Selection.assetGUIDs;
+            if (guids == null || guids.Length == 0)
+            {
+                return;
+            }
+            for (int i = 0; i < guids.Length; i++)
+            {
+
+                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                string name = Path.GetFileNameWithoutExtension(path);
+                if (EditorUtility.DisplayCancelableProgressBar("通过路径添加分组", "添加分组 " + name, i / guids.Length - 1))
+                {
+                    return;
+                }
+
+                if (Directory.Exists(path))
+                {
+                    for (int j = 0; j < SceneConfigData.sceneConfig.groupConfigs.Count; j++)
+                    {
+                        //检查所选目录是否已经有了当前分组
+                        if (SceneConfigData.sceneConfig.groupConfigs[j].groupName == name)
+                        {
+                            switch (EditorUtility.DisplayDialogComplex("重名", "当前目录分组命名重复，覆盖还是新建？", "覆盖", "跳过", "新建"))
+                            {
+                                //覆盖
+                                case 0:
+                                    SceneConfigData.sceneConfig.groupConfigs[j].UseBindPath = true;
+                                    SceneConfigData.sceneConfig.groupConfigs[j].Path = path;
+                                    SceneConfigData.sceneConfig.groupConfigs[j].RefreshType = GroupConfigInfo.Type.Sync;
+                                    Config.GroupIndexPanel = j + 1;
+                                    RefreshCurrSceneConfigForPath(j);
+                                    break;
+                                //跳过
+                                case 1:
+                                    Config.GroupIndexPanel = j + 1;
+                                    break;
+                                //新建
+                                case 2:
+                                    SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo(CreateGroupWindow.NameAdd(name), true, GroupConfigInfo.Type.Sync, path, new List<SceneConfigInfo>()));
+                                    Config.GroupIndexPanel = SceneConfigData.sceneConfig.groupConfigs.Count;
+                                    RefreshCurrSceneConfigForPath(SceneConfigData.sceneConfig.groupConfigs.Count - 1);
+                                    break;
+                            }
+                            break;
+                        }
+                    }
+                    //新建
+                    SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo(name, true, GroupConfigInfo.Type.Sync, path, new List<SceneConfigInfo>()));
+                    Config.GroupIndexPanel = SceneConfigData.sceneConfig.groupConfigs.Count;
+                    RefreshCurrSceneConfigForPath(SceneConfigData.sceneConfig.groupConfigs.Count - 1);
+                }
+            }
+            EditorUtility.ClearProgressBar();
+            Debug.Log("通过路径创建完成");
+        }
+
+        /// <summary>
+        /// 根据当前path刷新路径的场景,自动判断刷新类型
+        /// </summary>
+        /// <param name="currGroupIndex"></param>
+        public static void RefreshCurrSceneConfigForPath(int currGroupIndex)
+        {
+            GroupConfigInfo currGroupConfig = SceneConfigData.sceneConfig.groupConfigs[currGroupIndex];
+            string path = currGroupConfig.Path;
+
+            //增加路径判断，防止路径变更后路径不匹配
+            if (path == string.Empty)
+            {
+                Debug.LogError("路径为空");
+                return;
+            }
+            else if (!Directory.Exists(path))
+            {
+                Debug.LogError("路径不存在，请重新设置");
+                return;
+            }
+
+            //查找路径内的所有场景文件
+            string[] sceneGuids = AssetDatabase.FindAssets("t:Scene", new string[] { path });
+
+            if (sceneGuids == null || sceneGuids.Length == 0)
+            {
+                return;
+            }
+
+            if (currGroupConfig.RefreshType == GroupConfigInfo.Type.Sync)
+            {
+                currGroupConfig.sceneInfos.Clear();
+            }
+
+            foreach (var sceneGuid in sceneGuids)
+            {
+                AddScene(currGroupIndex, sceneGuid, SceneConfigInfoType.sceneGUID);
+            }
+        }
+
         [MenuItem(Config.MenuPath.addAllScene)]
         static void AddAllSceneConfig()
         {
@@ -102,12 +201,7 @@ namespace QuickOpenScene
             }
 
             SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
-            QOSWindow.RefreshGetSceneConfigInfos();
-
-            if (Config.GroupIndexPanel == 0)
-            {
-                Config.GroupIndexPanel = 1;
-            }
+            QOSWindow.RefreshGetSceneConfigInfos();            
 
             SceneConfigData.instance.SaveDate();
             Debug.Log("添加 " + sceneConfigInfo.sceneName + " 场景到分组" + SceneConfigData.sceneConfig.groupConfigs[groupIndex].groupName + " 成功！", AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
