@@ -105,14 +105,13 @@ namespace QuickOpenScene
                                 if (Event.current.button == 0)
                                 {
                                     var sceneInfo = GetSceneConfigInfos[index];
-                                    if (IsSceneValid(sceneInfo)|| TryRefreshSceneInfo(sceneInfo))
+                                    if (IsSceneValid(sceneInfo) || TryRefreshSceneInfo(sceneInfo))
                                     {
                                         //要打开的场景是否是当前已经打开的场景
                                         bool s = false;
                                         for (int i = 0; i < SceneManager.sceneCount; i++)
                                         {
-                                            if (SceneManager.GetSceneAt(i).path == sceneInfo.scenePath
-)
+                                            if (SceneManager.GetSceneAt(i).path == sceneInfo.scenePath)
                                             {
                                                 s = true;
                                                 break;
@@ -123,7 +122,7 @@ namespace QuickOpenScene
                                         {
                                             OpenScene(sceneInfo.scenePath);
                                         }
-                                    }                                    
+                                    }
                                     else if (EditorUtility.DisplayDialog("场景丢失", $"场景{sceneInfo.sceneName}已丢失，是否删除？", "删除数据", "取消"))
                                     {
                                         SceneConfigManage.RemoveSceneInfo(sceneInfo);
