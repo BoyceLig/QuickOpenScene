@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
@@ -105,14 +105,25 @@ namespace QuickOpenScene
                                 if (Event.current.button == 0)
                                 {
                                     var sceneInfo = GetSceneConfigInfos[index];
-                                    if (IsSceneValid(sceneInfo))
+                                    if (IsSceneValid(sceneInfo)|| TryRefreshSceneInfo(sceneInfo))
                                     {
-                                        OpenScene(sceneInfo.scenePath);
-                                    }
-                                    else if (TryRefreshSceneInfo(sceneInfo))
-                                    {
-                                        OpenScene(sceneInfo.scenePath);
-                                    }
+                                        //要打开的场景是否是当前已经打开的场景
+                                        bool s = false;
+                                        for (int i = 0; i < SceneManager.sceneCount; i++)
+                                        {
+                                            if (SceneManager.GetSceneAt(i).path == sceneInfo.scenePath
+)
+                                            {
+                                                s = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (!s)
+                                        {
+                                            OpenScene(sceneInfo.scenePath);
+                                        }
+                                    }                                    
                                     else if (EditorUtility.DisplayDialog("场景丢失", $"场景{sceneInfo.sceneName}已丢失，是否删除？", "删除数据", "取消"))
                                     {
                                         SceneConfigManage.RemoveSceneInfo(sceneInfo);
@@ -302,9 +313,9 @@ namespace QuickOpenScene
             }
             //根据路径刷新场景信息
             EditorGUI.BeginDisabledGroup(!SceneConfigData.sceneConfig.groupConfigs[Config.CurrGroupIndex].UseBindPath);
-            {                
+            {
                 if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("Refresh").image, "更新分组内绑定路径的场景"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
-                {                   
+                {
                     if (Config.GroupIndexPanel == 0)
                     {
                         for (int i = 0; i < SceneConfigData.sceneConfig.groupConfigs.Count; i++)
@@ -313,7 +324,7 @@ namespace QuickOpenScene
                             {
                                 EditorUtility.ClearProgressBar();
                                 return;
-                            }                            
+                            }
                             SceneConfigManage.RefreshCurrSceneConfigForPath(i);
                         }
                     }
@@ -346,7 +357,7 @@ namespace QuickOpenScene
                 {
                     //删除分组
                     if (GUILayout.Button(new GUIContent(EditorGUIUtility.IconContent("TreeEditor.Trash").image, "删除当前分组和当前分组内的场景数据"), GUILayout.ExpandWidth(false)) && Event.current.button == 0)
-                    {                        
+                    {
                         Config.GroupIndexPanel -= 1;
                         SceneConfigData.sceneConfig.groupConfigs.RemoveAt(Config.GroupIndexPanel);
                         SceneConfigData.instance.SaveDate();
@@ -434,13 +445,24 @@ namespace QuickOpenScene
             {
                 if (EditorApplication.isPlaying)
                 {
-                    EditorUtility.DisplayDialog("警告", "场景正在运行，请停止后再切换场景。", "确认");
+                    void OpenScene()
+                    {
+                        if (EditorApplication.isPlaying == false)
+                        {
+                            EditorSceneManager.OpenScene(path);
+                            EditorApplication.update -= OpenScene;
+                        }
+                    }
+                    if (EditorUtility.DisplayDialog("警告", "场景正在运行，是否继续打开新场景？", "继续", "取消"))
+                    {
+                        EditorApplication.isPlaying = false;
+                        EditorApplication.update += OpenScene;
+                    }
                 }
                 else
                 {
                     EditorSceneManager.OpenScene(path);
                 }
-
             }
 
             //判断场景是否需要保存
