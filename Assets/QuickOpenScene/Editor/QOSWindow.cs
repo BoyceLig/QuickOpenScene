@@ -463,58 +463,19 @@ namespace QuickOpenScene
         /// 打开场景
         /// </summary>
         /// <param name="scenePath">场景路径</param>
-        static void OpenScene(string scenePath)
+        private static void OpenScene(string scenePath)
         {
-            void SceneIsPlayingCheck(string path)
+            if (EditorApplication.isPlaying)
             {
-                if (EditorApplication.isPlaying)
-                {
-                    void OpenScene()
-                    {
-                        if (EditorApplication.isPlaying == false)
-                        {
-                            EditorSceneManager.OpenScene(path);
-                            EditorApplication.update -= OpenScene;
-                        }
-                    }
-
-                    if (EditorUtility.DisplayDialog("警告", "场景正在运行，是否继续打开新场景？", "继续", "取消"))
-                    {
-                        EditorApplication.isPlaying = false;
-                        EditorApplication.update += OpenScene;
-                    }
-                }
-                else
-                {
-                    EditorSceneManager.OpenScene(path);
-                }
+                Debug.LogWarning(Config.SceneIsPlayingWaring);
+                GetWindow<QOSWindow>().ShowNotification(new GUIContent(Config.SceneIsPlayingWaring));
+                return;
             }
 
             //判断场景是否需要保存
-            if (SceneManager.GetActiveScene().isDirty)
+            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
-                int b = EditorUtility.DisplayDialogComplex("保存", $"当前场景有修改，要打开场景 {Path.GetFileNameWithoutExtension(scenePath)} 是否保存当前场景？", "打开(保存场景)", "取消", "打开(不保存)");
-                switch (b)
-                {
-                    //打开(保存场景)
-                    case 0:
-                        EditorSceneManager.SaveOpenScenes();
-                        SceneIsPlayingCheck(scenePath);
-                        break;
-
-                    //打开(不保存)
-                    case 2:
-                        SceneIsPlayingCheck(scenePath);
-                        break;
-
-                    //取消
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                SceneIsPlayingCheck(scenePath);
+                EditorSceneManager.OpenScene(scenePath);
             }
         }
 

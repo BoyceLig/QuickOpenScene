@@ -371,5 +371,8 @@ namespace QuickOpenScene
             }
 
         }
+        
+        //Debug
+        public const string SceneIsPlayingWaring = "当前正在运行，请停止运行后切换场景";
     }
 }
