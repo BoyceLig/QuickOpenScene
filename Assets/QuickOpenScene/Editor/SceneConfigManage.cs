@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -47,9 +48,9 @@ namespace QuickOpenScene
             {
                 return;
             }
+
             for (int i = 0; i < guids.Length; i++)
             {
-
                 string path = AssetDatabase.GUIDToAssetPath(guids[i]);
                 string name = Path.GetFileNameWithoutExtension(path);
                 if (EditorUtility.DisplayCancelableProgressBar("通过路径添加分组", "添加分组 " + name, i / guids.Length - 1))
@@ -80,20 +81,26 @@ namespace QuickOpenScene
                                     break;
                                 //新建
                                 case 2:
-                                    SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo(CreateGroupWindow.NameAdd(name), true, GroupConfigInfo.Type.Sync, path, new List<SceneConfigInfo>()));
+                                    SceneConfigData.sceneConfig.groupConfigs.Add(
+                                        new GroupConfigInfo(CreateGroupWindow.NameAdd(name), true,
+                                            GroupConfigInfo.Type.Sync, path, new List<SceneConfigInfo>()));
                                     Config.GroupIndexPanel = SceneConfigData.sceneConfig.groupConfigs.Count;
                                     RefreshCurrSceneConfigForPath(SceneConfigData.sceneConfig.groupConfigs.Count - 1);
                                     break;
                             }
+
                             break;
                         }
                     }
+
                     //新建
-                    SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo(name, true, GroupConfigInfo.Type.Sync, path, new List<SceneConfigInfo>()));
+                    SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo(name, true,
+                        GroupConfigInfo.Type.Sync, path, new List<SceneConfigInfo>()));
                     Config.GroupIndexPanel = SceneConfigData.sceneConfig.groupConfigs.Count;
                     RefreshCurrSceneConfigForPath(SceneConfigData.sceneConfig.groupConfigs.Count - 1);
                 }
             }
+
             EditorUtility.ClearProgressBar();
             Debug.Log("通过路径创建完成");
         }
@@ -157,22 +164,14 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfoType">info 的类型</param>
         public static void AddScene(int groupIndex, string info, SceneConfigInfoType sceneConfigInfoType)
         {
-            if (SceneConfigData.sceneConfig.groupConfigs.Count <= groupIndex)
-            {
-                return;
-            }
-            string path;
-            if (sceneConfigInfoType == SceneConfigInfoType.sceneGUID)
-            {
-                path = AssetDatabase.GUIDToAssetPath(info);
-            }
-            else
-            {
-                path = info;
-            }
+            if (SceneConfigData.sceneConfig.groupConfigs.Count <= groupIndex || string.IsNullOrEmpty(info)) return;
+
+            var path = sceneConfigInfoType == SceneConfigInfoType.sceneGUID
+                ? AssetDatabase.GUIDToAssetPath(info)
+                : info;
             if (File.Exists(path) && Path.GetExtension(path).Contains(".unity") && path.StartsWith("Assets"))
             {
-                SceneConfigInfo temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
+                var temp = new SceneConfigInfo(path, SceneConfigInfoType.scenePath);
                 AddScene(groupIndex, temp);
             }
         }
@@ -184,27 +183,27 @@ namespace QuickOpenScene
         /// <param name="sceneConfigInfo">场景数据</param>
         public static void AddScene(int groupIndex, SceneConfigInfo sceneConfigInfo)
         {
-            if (SceneConfigData.sceneConfig.groupConfigs.Count <= groupIndex)
+            if (SceneConfigData.sceneConfig.groupConfigs.Count <= groupIndex || sceneConfigInfo == null ||
+                string.IsNullOrEmpty(sceneConfigInfo.scenePath) || string.IsNullOrEmpty(sceneConfigInfo.sceneGUID) ||
+                string.IsNullOrEmpty(sceneConfigInfo.sceneName))
             {
                 return;
             }
 
             if (SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos.Count > 0)
             {
-                foreach (var item in SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos)
-                {
-                    if (item.sceneGUID == sceneConfigInfo.sceneGUID)
-                    {
-                        return;
-                    }
-                }
+                if (SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos
+                    .Any(item => item.sceneGUID == sceneConfigInfo.sceneGUID)) return;
             }
 
             SceneConfigData.sceneConfig.groupConfigs[groupIndex].sceneInfos.Add(sceneConfigInfo);
-            QOSWindow.RefreshGetSceneConfigInfos();            
+            QOSWindow.RefreshGetSceneConfigInfos();
 
             SceneConfigData.instance.SaveDate();
-            Debug.Log("添加 " + sceneConfigInfo.sceneName + " 场景到分组" + SceneConfigData.sceneConfig.groupConfigs[groupIndex].groupName + " 成功！", AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
+            Debug.Log(
+                "添加 " + sceneConfigInfo.sceneName + " 场景到分组" +
+                SceneConfigData.sceneConfig.groupConfigs[groupIndex].groupName + " 成功！",
+                AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneConfigInfo.scenePath));
         }
 
         /// <summary>
@@ -232,7 +231,8 @@ namespace QuickOpenScene
                 {
                     if (SceneConfigData.sceneConfig.groupConfigs[i].sceneInfos[j] == sceneConfigInfo)
                     {
-                        Debug.Log("删除 " + SceneConfigData.sceneConfig.groupConfigs[i].groupName + " 分组内的 " + sceneConfigInfo.sceneName + " 场景成功！");
+                        Debug.Log("删除 " + SceneConfigData.sceneConfig.groupConfigs[i].groupName + " 分组内的 " +
+                                  sceneConfigInfo.sceneName + " 场景成功！");
                         SceneConfigData.sceneConfig.groupConfigs[i].sceneInfos.Remove(sceneConfigInfo);
                         QOSWindow.RefreshGetSceneConfigInfos();
                         SceneConfigData.instance.SaveDate();
@@ -256,7 +256,6 @@ namespace QuickOpenScene
                 string path = Config.PluginPath + "/ChangeLog.txt";
                 Config.LogText = AssetDatabase.LoadAssetAtPath<TextAsset>(path).text;
             }
-
         }
 
         /// <summary>
@@ -271,13 +270,15 @@ namespace QuickOpenScene
                 foreach (string guid in guids)
                 {
                     string tempPath = AssetDatabase.GUIDToAssetPath(guid);
-                    if (tempPath.Contains("QuickOpenScene/Editor/GithubJsonData.cs") || tempPath.Contains("com.boycelig.quickopenscene/Editor/GithubJsonData.cs"))
+                    if (tempPath.Contains("QuickOpenScene/Editor/GithubJsonData.cs") ||
+                        tempPath.Contains("com.boycelig.quickopenscene/Editor/GithubJsonData.cs"))
                     {
                         string githubJsonDataPath = AssetDatabase.GUIDToAssetPath(guid);
                         return githubJsonDataPath.Remove(githubJsonDataPath.IndexOf("/Editor/GithubJsonData.cs"));
                     }
                 }
             }
+
             return null;
         }
 
@@ -289,7 +290,8 @@ namespace QuickOpenScene
         {
             if (SceneConfigData.sceneConfig.groupConfigs.Count == 0)
             {
-                SceneConfigData.sceneConfig.groupConfigs.Add(new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
+                SceneConfigData.sceneConfig.groupConfigs.Add(
+                    new GroupConfigInfo("Default", new List<SceneConfigInfo>()));
             }
         }
     }
