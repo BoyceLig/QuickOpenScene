@@ -25,7 +25,7 @@ namespace QuickOpenScene
     public class Config
     {
         //当前版本
-        public const string currVersion = "1.9.5";
+        public const string currVersion = "1.9.6";
 
         public const string sceneConfigDatePath = "UserSettings/QOSUserSettings.asset";
 
