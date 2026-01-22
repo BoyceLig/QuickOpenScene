@@ -1,7 +1,7 @@
 {
   "name": "com.boycelig.quickopenscene",
   "displayName": "Quick Open Scene",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "unity": "2019.4",
   "description": "此工具为方便Unity工程内有很多场景并且在不同位置，更方便的场景集合切换工具。",
   "license": "MIT",
