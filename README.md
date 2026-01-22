@@ -26,6 +26,18 @@ Package Manage添加git地址：https://github.com/BoyceLig/QuickOpenScene.git?p
 
 下载整个工程，复制Assets文件夹内的QuickOpenScene到工程里
 
+#### 方法4：
+
+通过Scoped Registries包安装
+
+Name: OpenUPM
+
+URL: https://package.openupm.com
+
+Scope(s): com.boycelig.quickopenscene
+
+<img width="853" height="304" alt="image" src="https://github.com/user-attachments/assets/333401c8-03a4-426b-a766-c2cdfbb81464" />
+
 ### 自定义添加场景:
 
 - 选定目录右键添加（`Assets/Tools/Quick Open Scene/添加当前目录场景或此场景到配置文件`）
@@ -60,7 +72,7 @@ Package Manage添加git地址：https://github.com/BoyceLig/QuickOpenScene.git?p
 
 ## 视频功能展示
 
-[Unity 快速打开场景工具 (QuickOpenScene)_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1X84y1b7nU)
+[Unity 快速打开场景工具 (QuickOpenScene) - 哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1X84y1b7nU)
 
 [Unity 快速打开场景工具 (QuickOpenScene) - YouTube](https://youtu.be/56LnPIqwjl0)
 
